@@ -55,12 +55,12 @@
   <header class="brand-gradient text-white sticky-h">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
       <div class="flex items-center justify-start gap-4">
-        <div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">B2H Implementation Library</h1>
-          <p class="mt-1 text-sm text-white/90">
-            <span id="docCount">0</span> documents • Search titles, blurbs, and detailed summaries
-          </p>
-        </div>
+<div class="flex items-center justify-center">
+  <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-center">
+    B2H Implementation Library
+  </h1>
+</div>
+
       </div>
 
       <!-- Search + Sort -->
@@ -626,7 +626,8 @@
       }).join("");
 
       grid.querySelectorAll(".card").forEach((el, idx) => el.addEventListener("click", () => openDrawer(sorted[idx])));
-      document.getElementById("docCount").textContent = DOCS.length;
+      const dc = document.getElementById("docCount"); if (dc) dc.textContent = DOCS.length;
+
     }
 
     // -------------------------

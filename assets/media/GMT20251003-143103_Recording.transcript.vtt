@@ -1,0 +1,186 @@
+WEBVTT
+
+1
+00:00:02.230 --> 00:00:05.799
+Jagadeesh Kumar Gorla: Well, let's see how to use a location finder.
+
+2
+00:00:07.480 --> 00:00:12.079
+Jagadeesh Kumar Gorla: Now, here, starting off the file, we'll have two A sheet here?
+
+3
+00:00:12.460 --> 00:00:16.549
+Jagadeesh Kumar Gorla: One is proximity checker, and another one is address to coordinates.
+
+4
+00:00:17.120 --> 00:00:22.330
+Jagadeesh Kumar Gorla: How it will work here is, you have to enter the address, the name.
+
+5
+00:00:22.760 --> 00:00:27.479
+Jagadeesh Kumar Gorla: landed email and phone details here. Then.
+
+6
+00:00:27.690 --> 00:00:32.889
+Jagadeesh Kumar Gorla: I have highlighted the full address, so please do not touch it, since it has a formula here.
+
+7
+00:00:33.350 --> 00:00:37.389
+Jagadeesh Kumar Gorla: And we have to enter city, state, zip code.
+
+8
+00:00:37.870 --> 00:00:40.620
+Jagadeesh Kumar Gorla: Once, after entering all this information.
+
+9
+00:00:40.950 --> 00:00:48.670
+Jagadeesh Kumar Gorla: the geo-latitude, longitude information should pop up, but I have removed the formula here.
+
+10
+00:00:49.560 --> 00:00:53.849
+Jagadeesh Kumar Gorla: Because it'll take a long time to work, and at the same time.
+
+11
+00:00:54.580 --> 00:00:56.319
+Jagadeesh Kumar Gorla: If you're planning to use it.
+
+12
+00:00:56.660 --> 00:01:00.139
+Jagadeesh Kumar Gorla: Please use it, like, use the formula.
+
+13
+00:01:00.620 --> 00:01:04.540
+Jagadeesh Kumar Gorla: And then you'll get the coordinates after that.
+
+14
+00:01:04.680 --> 00:01:07.430
+Jagadeesh Kumar Gorla: Please copy and paste as values so that
+
+15
+00:01:07.820 --> 00:01:09.670
+Jagadeesh Kumar Gorla: If you keep on piling it up.
+
+16
+00:01:10.020 --> 00:01:12.809
+Jagadeesh Kumar Gorla: It'll take a lot of time for the Excel to load.
+
+17
+00:01:13.190 --> 00:01:17.859
+Jagadeesh Kumar Gorla: So I would always recommend copy, and then paste as values.
+
+18
+00:01:18.280 --> 00:01:22.439
+Jagadeesh Kumar Gorla: So that it will not take much time, and it will not hang your Excel.
+
+19
+00:01:22.780 --> 00:01:27.500
+Jagadeesh Kumar Gorla: So, once you've entered the information, It will automatically give us
+
+20
+00:01:27.730 --> 00:01:34.510
+Jagadeesh Kumar Gorla: What is the nearest school distance in feet? And also the nearest school name.
+
+21
+00:01:35.230 --> 00:01:41.240
+Jagadeesh Kumar Gorla: And here, It'll give you the nearest hospital, And also.
+
+22
+00:01:41.440 --> 00:01:47.150
+Jagadeesh Kumar Gorla: Here, now it is giving the recreation type of the school district which we are taking here.
+
+23
+00:01:48.680 --> 00:01:53.690
+Jagadeesh Kumar Gorla: And then, the nearest hospital. And what is the availability?
+
+24
+00:01:53.790 --> 00:01:57.250
+Jagadeesh Kumar Gorla: And the safe distance means whether…
+
+25
+00:01:57.520 --> 00:02:00.960
+Jagadeesh Kumar Gorla: The school district, which we are seeing, is
+
+26
+00:02:02.420 --> 00:02:04.419
+Jagadeesh Kumar Gorla: Greater than 500 feet or not.
+
+27
+00:02:05.530 --> 00:02:08.120
+Jagadeesh Kumar Gorla: So, based on it, it'll automatically tell us
+
+28
+00:02:08.340 --> 00:02:14.310
+Jagadeesh Kumar Gorla: Whether it's safe for us to consider for the Participants?
+
+29
+00:02:14.530 --> 00:02:20.959
+Jagadeesh Kumar Gorla: So that they can be… they'll be placed, like, more than 500 feet from the nearest school.
+
+30
+00:02:21.200 --> 00:02:23.669
+Jagadeesh Kumar Gorla: And the school type will also come over here.
+
+31
+00:02:24.180 --> 00:02:26.899
+Jagadeesh Kumar Gorla: And if you want, you can even filter it, like.
+
+32
+00:02:27.160 --> 00:02:33.850
+Jagadeesh Kumar Gorla: Just click on Save, so it'll clearly tell us that which locations are safe for us, not safe, so these are the…
+
+33
+00:02:34.230 --> 00:02:36.319
+Jagadeesh Kumar Gorla: Locations which we need to be
+
+34
+00:02:37.570 --> 00:02:43.989
+Jagadeesh Kumar Gorla: Clearly ensure that, you know, we can play… we are placing the right candidate at the particular accommodation.
+
+35
+00:02:45.660 --> 00:02:50.739
+Jagadeesh Kumar Gorla: And I have added the formulas here so that we can use it for future, and…
+
+36
+00:02:52.350 --> 00:02:59.800
+Jagadeesh Kumar Gorla: The school district's names, and also the hospital names, which you are seeing here, they're not automatically coming.
+
+37
+00:03:00.010 --> 00:03:06.590
+Jagadeesh Kumar Gorla: If they're coming, because I've created a database here, You can see that schools.
+
+38
+00:03:08.080 --> 00:03:10.690
+Jagadeesh Kumar Gorla: So, I pulled this data from…
+
+39
+00:03:12.440 --> 00:03:14.610
+Jagadeesh Kumar Gorla: If we can see here the data sources.
+
+40
+00:03:15.350 --> 00:03:21.439
+Jagadeesh Kumar Gorla: So this is the place where I was able to get this data. So in future, I would always recommend
+
+41
+00:03:21.580 --> 00:03:25.130
+Jagadeesh Kumar Gorla: To go through these resources, other links?
+
+42
+00:03:25.700 --> 00:03:28.860
+Jagadeesh Kumar Gorla: So that you will see that
+
+43
+00:03:29.090 --> 00:03:31.599
+Jagadeesh Kumar Gorla: The updated school's information is there.
+
+44
+00:03:32.230 --> 00:03:34.370
+Jagadeesh Kumar Gorla: And if you find it, please update it.
+
+45
+00:03:35.800 --> 00:03:38.289
+Jagadeesh Kumar Gorla: So, this is how we can use.
+
+46
+00:03:40.150 --> 00:03:44.259
+Jagadeesh Kumar Gorla: And I'm gonna hide it, so it will be here for any time you want it. Thank you.
+

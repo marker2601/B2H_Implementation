@@ -108,43 +108,53 @@
   <script>
     // ---------- DATA (exact filenames in /docs/) ----------
     const DOCS = [
-      { title:"24/7 Hotline SOP (Landlords & Participants)", blurb:"Always-available contact pathway; triage, escalation, documentation, follow-up.", href:"docs/24x7_Hotline_SOP.docx", tag:"Protocols", category:"Protocols" },
-      { title:"72 Hour Move In protocol", blurb:"72-hr orientation for tenant/landlord; move-in kit; stabilization.", href:"docs/72 Hour Move In protocol.docx", tag:"Protocols", category:"Protocols" },
-      { title:"Administrator Job Description", blurb:"Operations, compliance, reporting, staff leadership.", href:"docs/Administrator Job Description.docx", tag:"Roles", category:"Roles" },
-      { title:"Agency Flyer", blurb:"One-page outreach for agencies.", href:"docs/Agency Flyer.pdf", tag:"Partnerships", category:"Partnerships" },
-      { title:"Bridge Housing – Partner Info Sheet", blurb:"Expectations, limits, check-ins, incident response.", href:"docs/Bridge_Housing_Partner_Info_Sheet.docx", tag:"Partnerships", category:"Partnerships" },
-      { title:"Bridge Housing – Referral Form", blurb:"Internal referral capture for bridge housing.", href:"docs/Bridge_Housing_Referral_Form.docx", tag:"Workflows", category:"Workflows" },
-      { title:"Case Manager Job Description", blurb:"Core duties & competencies.", href:"docs/Case Manager Job Description.docx", tag:"Roles", category:"Roles" },
-      { title:"Client Referral Workflow", blurb:"End-to-end referral from IDOC to placement.", href:"docs/Client Referral Workflow.docx", tag:"Workflows", category:"Workflows" },
-      { title:"Data Coordinator Job Description", blurb:"Data entry, QA, reporting.", href:"docs/Data Coordinator Job Description.docx", tag:"Roles", category:"Roles" },
-      { title:"Driver Job Description", blurb:"Transport, safety, logs.", href:"docs/Driver Job Description.docx", tag:"Roles", category:"Roles" },
-      { title:"Frequently Asked Questions", blurb:"Common questions & answers.", href:"docs/Frequently Asked Questions.docx", tag:"Overview", category:"Overview" },
-      { title:"Housing Eligibility Screening and Intake & Readiness", blurb:"Comprehensive screening tool.", href:"docs/Housing Eligibility Screening and Intake & Readiness.docx", tag:"Assessments", category:"Assessments" },
-      { title:"Housing Match Workflow", blurb:"Matching process & restrictions.", href:"docs/Housing Match Workflow.docx", tag:"Workflows", category:"Workflows" },
-      { title:"Housing Provider Directory", blurb:"Provider contacts and service areas.", href:"docs/Housing Provider Directory.xlsx", tag:"Overview", category:"Overview" },
-      { title:"Implementation Plan", blurb:"Phased plan & milestones.", href:"docs/Implementation Plan.docx", tag:"Overview", category:"Overview" },
-      { title:"Incident Triage Decision Tree", blurb:"Safety triage and escalation.", href:"docs/Incident Triage Decision Tree.docx", tag:"Protocols", category:"Protocols" },
-      { title:"Internal Bridge Housing Protocol", blurb:"Bridge housing guidance.", href:"docs/Internal_Bridge_Housing_Protocol.docx", tag:"Protocols", category:"Protocols" },
-      { title:"KPIs with Recommend Tracking", blurb:"KPIs for placement, services, stability.", href:"docs/KPIs_with_Recommend Tracking.docx", tag:"Overview", category:"Overview" },
-      { title:"Landlord Flyer", blurb:"Why partner & how to enroll.", href:"docs/Landlord Flyer.pdf", tag:"Partnerships", category:"Partnerships" },
-      { title:"Landlord Overview Deck", blurb:"Program, supports, incentives.", href:"docs/Landlord Overview Deck.pdf", tag:"Partnerships", category:"Partnerships" },
-      { title:"Landlord Incentive Proposal", blurb:"Bonuses, mitigation fund, fees.", href:"docs/Landlord_Incentive_Proposal.docx", tag:"Partnerships", category:"Partnerships" },
-      { title:"Landlord Invoice and Process", blurb:"Monthly invoice template & workflow.", href:"docs/Landlord_Invoice_and_Process.docx", tag:"Partnerships", category:"Partnerships" },
-      { title:"Landlord Orientation Packet", blurb:"Onboarding packet.", href:"docs/Landlord_Orientation_Packet.docx", tag:"Partnerships", category:"Partnerships" },
-      { title:"Lease Violation / Incident Form", blurb:"Incident/violation report.", href:"docs/Lease_Violation_Incident_Form.docx", tag:"Protocols", category:"Protocols" },
-      { title:"Move-In Checklist", blurb:"Move-in kit checklist.", href:"docs/Move-In Checklist.docx", tag:"Protocols", category:"Protocols" },
-      { title:"Network Housing Developer Job Description", blurb:"Landlord outreach & pipeline.", href:"docs/Network Housing Developer Job Description.docx", tag:"Roles", category:"Roles" },
-      { title:"Opportunity Notice", blurb:"Program overview & counties.", href:"docs/Opportunity Notice.docx", tag:"Overview", category:"Overview" },
-      { title:"Peer Support Specialist Job Description", blurb:"Peer role supporting recovery.", href:"docs/Peer Support Specialist Job Description.docx", tag:"Roles", category:"Roles" },
-      { title:"Pilot Program Staffing Model", blurb:"60-participant staffing mix.", href:"docs/Pilot Program Staffing Model.docx", tag:"Overview", category:"Overview" },
-      { title:"Pre & Post Release Placement Timeline", blurb:"Milestones pre/post release.", href:"docs/Pre_Post_Release_Placement_Timeline.docx", tag:"Workflows", category:"Workflows" },
-      { title:"Recommendations", blurb:"Program enablement recommendations.", href:"docs/Recommendations.docx", tag:"Overview", category:"Overview" },
-      { title:"Roles and Responsibilities", blurb:"Duties by role.", href:"docs/Roles and Responsibilities.docx", tag:"Roles", category:"Roles" },
-      { title:"Service Provider Directory", blurb:"Service provider contacts.", href:"docs/Service_Provider.xlsx", tag:"Overview", category:"Overview" },
-      { title:"Stabilization and Ongoing Supports SOP", blurb:"Post-move-in cadence & escalation.", href:"docs/Stabilization and Ongoing Supports SOP.docx", tag:"Protocols", category:"Protocols" },
-      { title:"Sub-Contracting Workflow", blurb:"Subcontractor process.", href:"docs/Sub-Contracting Workflow.docx", tag:"Workflows", category:"Workflows" },
-      { title:"Suitability Assessment", blurb:"Readiness assessment tool.", href:"docs/Suitability_Assessment.docx", tag:"Assessments", category:"Assessments" },
-      { title:"Supervisor Job Description", blurb:"Clinical supervision & QA.", href:"docs/Supervisor Job Description.docx", tag:"Roles", category:"Roles" }
+     // --- Batch 1: five files with detailed human-written summaries ---
+
+{
+  title: "24/7 Hotline SOP (Landlords & Participants)",
+  blurb: "Always-available contact pathway; triage, escalation, documentation, follow-up.",
+  href: "docs/24x7_Hotline_SOP.docx",
+  tag: "Protocols",
+  category: "Protocols",
+  summary: "Formal standard operating procedure for the B2H hotline covering purpose, scope, definitions, hours/access, RACI roles (Triage Specialist, On-Call Case Manager, Supervisor, PQI/Data), and verification steps. Includes a decision tree for life-safety (911 guidance and notifications), urgent non-life-safety (lockout, leaks, heat outage, welfare checks) with warm transfers and paging rules, and routine requests (AP/billing, minor maintenance) queued to case managers. Sets response SLAs (pickup, callback, escalation), ready-to-use scripts, and ECR documentation templates (Hotline Incident note, follow-up task, supervisor notification). Addresses special scenarios (behavioral health/SUD distress, bridge housing incidents, law enforcement), on-call scheduling, contingency/outage procedures, metrics/PQI review, privacy/ROI/PHI safeguards, and training/tabletop exercises. Key appendices list call categories and required ECR data elements. :contentReference[oaicite:0]{index=0}"
+},
+
+{
+  title: "72 Hour Move In protocol",
+  blurb: "72-hr orientation for tenant/landlord; move-in kit; stabilization.",
+  href: "docs/72 Hour Move In protocol.docx",
+  tag: "Protocols",
+  category: "Protocols",
+  summary: "Structured 72-hour stabilization plan immediately post-placement. Day 1: tenant orientation and unit onboarding (walkthrough, basic operations, lease review/acknowledgment, case management expectations, emergency protocol/24-7 hotline, move-in kit delivery and inventory). Day 2: landlord orientation (program role of TASC, incentives and payment processes, documentation requirements for eligibility, incident/lease-violation reporting, contacts, compliance reminders). Day 3: joint landlord-tenant-case manager meeting to establish rapport, define communication preferences/boundaries, capture concerns/accommodations, align expectations, and document completion forms/ISP updates. Includes a standard move-in kit bill of materials (bedding, kitchen, cleaning, hygiene, first-aid, misc., optional food) and mandates ECR logging, signatures, and supervisor approval for exceptions. :contentReference[oaicite:1]{index=1}"
+},
+
+{
+  title: "Administrator Job Description",
+  blurb: "Operations, compliance, reporting, staff leadership.",
+  href: "docs/Administrator Job Description.docx",
+  tag: "Roles",
+  category: "Roles",
+  summary: "Exempt leadership role (CTP/B2H) reporting to Director of Operations, responsible for daily program operations across a wide geography: administration, personnel supervision (5+ staff), information systems, reporting, and contract/budget deliverables. Core functions: QA/compliance monitoring, performance against benchmarks, data/reporting to funders, policy implementation, team coaching and performance management, HR partnership for recruitment/retention, and external relations with partners/funders/government. Competencies span planning/organizing, contract/risk management, data utilization, change leadership, and communication. Qualifications emphasize a master’s degree (LSW/LCSW or LPC/LCPC preferred), 3+ years supervisory experience in human services/reentry, knowledge of housing/HUD/tenant rights, on-call responsiveness, and ability to work in secured settings. Lists work environment/physical demands, travel, schedule, and EEO-aligned welcome to lived experience. :contentReference[oaicite:2]{index=2}"
+},
+
+{
+  title: "Agency Flyer",
+  blurb: "One-page outreach for agencies.",
+  href: "docs/Agency Flyer.pdf",
+  tag: "Partnerships",
+  category: "Partnerships",
+  summary: "Single-page explainer inviting service agencies to partner with B2H: what the program is (stable housing + supportive services), who it serves (re-entry population with high barriers), and why to join (robust referral pipeline, coordinated statewide partnerships, training and readiness support). Provides next steps (email/call B2H, submit interest form, attend orientation) and highlights ongoing case conferencing with TASC. Includes QR for quick intake to the Interest Form. :contentReference[oaicite:3]{index=3}"
+},
+
+{
+  title: "Agency Partnership Overview",
+  blurb: "Slide deck: program, why partners matter, roles, supports, FAQs, next steps.",
+  href: "docs/Agency_Overview.pdf",
+  tag: "Partnerships",
+  category: "Partnerships",
+  summary: "Deck describing the B2H program and the central role agencies play in housing stability. Covers program overview (housing placements + wraparound services; intensive case management; 24/7 hotline), the value of agencies (direct links to behavioral health, employment, skills; early intervention to prevent evictions; statewide collaboration; mission impact), and specific agency responsibilities (identify/ connect clients; develop ISPs with TASC; provide ongoing case management/support; participate in case conferencing and reporting). Details support to agencies (orientation, clear referral pathway, collaboration with housing liaisons, access to resources), an FAQ (who agencies serve, supports provided, incentives/visibility, how to join, expectations), and practical next steps (contact B2H, submit Letter of Intent/Interest Form, onboarding calls, begin referrals). :contentReference[oaicite:4]{index=4}"
+}
+
     ];
 
     // ---------- AUTO SUMMARY ----------

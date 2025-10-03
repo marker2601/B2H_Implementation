@@ -10,6 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
+    @media (max-width: 640px){
+  footer img[alt="TASC"]{ height: 24px; }
+  footer img[alt="Centric Strategies"]{ height: 20px; }
+}
+
     html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
     :root {
       --brand:#C2185B; --brandDark:#9B1349; --ink:#0F172A; --pill:#F1F5F9;
@@ -142,14 +147,25 @@
   <div id="drawerBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40 hidden"></div>
 
   <!-- Footer -->
-  <footer class="border-t">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex items-center justify-between">
-      <div class="text-xs text-slate-500">© TASC – B.R.I.D.G.E. To Home</div>
-      <div class="text-xs text-slate-500">
-        Built with ❤️ + Tailwind
-      </div>
+<footer class="border-t">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+    <!-- Left: TASC logo -->
+    <div class="flex items-center gap-3 min-w-0">
+      <img src="assets/tasc-logo.png" alt="TASC" class="h-8 w-auto object-contain"
+           onerror="this.style.display='none'"/>
+      <span class="text-xs text-slate-500 truncate">© TASC – B.R.I.D.G.E. To Home</span>
     </div>
-  </footer>
+
+    <!-- Right: Prepared by Centric Strategies + logo -->
+    <div class="flex items-center gap-2 shrink-0">
+      <span class="text-xs text-slate-500">Prepared by</span>
+      <img src="assets/centric-logo.png" alt="Centric Strategies" class="h-6 w-auto object-contain"
+           onerror="this.style.display='none'"/>
+      <span class="text-xs text-slate-600">Centric Strategies</span>
+    </div>
+  </div>
+</footer>
+
 
   <script>
     // -------------------------

@@ -200,6 +200,7 @@
           <button id="acrToggleEdit" class="btn btn-ghost">Enable Edit</button>
           <button id="acrAddNew" class="btn btn-primary">Add New</button>
           <button id="acrReset" class="btn btn-ghost">Reset to Defaults</button>
+          <button id="acrExport" class="btn btn-ghost">Export Changes</button>
         </div>
       </div>
 
@@ -475,13 +476,36 @@
     }
     function saveCustomAcr(custom) { localStorage.setItem(ACR_LS_KEY, JSON.stringify(custom)); }
     function resetCustomAcr() { localStorage.removeItem(ACR_LS_KEY); }
+
+        // Load the canonical acronyms from the repo (if present)
+    const ACR_DATA_URL = 'data/acronyms.json';  // if index.html is inside /docs, path stays 'data/acronyms.json'
+    let acrLoadedFromFile = null;
+    
+    async function loadAcronymsFromFile(){
+      try {
+        // no-store so you always see the latest committed JSON
+        const res = await fetch(ACR_DATA_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error('not found');
+        const arr = await res.json(); // [["KEY","Definition"], ...]
+        if (Array.isArray(arr)) acrLoadedFromFile = arr;
+      } catch (_) {
+        // If the JSON file doesn’t exist yet, we’ll fall back to defaults
+        acrLoadedFromFile = null;
+      }
+    }
+
     function getEffectiveAcronyms() {
-      const custom = loadCustomAcr(); const map = new Map();
-      ACRONYMS_DEFAULT.forEach(([k,v]) => map.set(k,v));
-      Object.entries(custom.overrides||{}).forEach(([k,v]) => map.set(k,v));
-      (custom.deletions||[]).forEach(k => map.delete(k));
+      // Use the repo file if it loaded, otherwise fall back to built-in defaults
+      const base = acrLoadedFromFile ? acrLoadedFromFile : ACRONYMS_DEFAULT;
+      const custom = loadCustomAcr(); // {overrides:{}, deletions:[]}
+      const map = new Map(base);
+      // Apply browser overrides
+      Object.entries(custom.overrides || {}).forEach(([k,v])=> map.set(k, v));
+      // Apply browser deletions
+      (custom.deletions || []).forEach(k=> map.delete(k));
       return Array.from(map.entries());
     }
+
 
     // -------------------------
     // UI Helpers
@@ -684,6 +708,21 @@
       if (!confirm("Reset all changes and custom acronyms to defaults?")) return;
       resetCustomAcr(); acrFormWrap.classList.add('hidden'); acrEditingKey = null; renderAcrList(acrSearchEl.value);
     });
+
+    function exportAcronymsJSON(){
+  const merged = getEffectiveAcronyms();
+  const blob = new Blob([JSON.stringify(merged, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'acronyms.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+}
+
+document.getElementById('acrExport')?.addEventListener('click', exportAcronymsJSON);
+
     function startEdit(key){
       const eff = new Map(getEffectiveAcronyms());
       acrEditingKey = key; acrKey.value = key; acrVal.value = eff.get(key) || "";
@@ -877,12 +916,15 @@
     document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
     document.getElementById("sortSel").addEventListener("change", (e)=>{ state.sort = e.target.value; renderCards(); });
 
-    (async function init(){
-      renderFilters();
-      await loadExternalSummaries();
-      renderCards();
-      renderAcrList();
-    })();
+(async function init(){
+  renderFilters();
+  await loadExternalSummaries();
+  await loadAcronymsFromFile();  
+  renderCards();
+  // Acronyms list initial (closed by default)
+  (function initialAcronyms(){ const field = document.getElementById('acrSearch'); if(field) field.value = ""; renderAcrList(""); })();
+})();
+
   </script>
 </body>
 </html>

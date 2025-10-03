@@ -12,7 +12,6 @@
   <style>
     html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
     :root { --brand:#C2185B; --brandDark:#9B1349; --ink:#0F172A; --pill:#F1F5F9; --slate:#64748B; --line:#E2E8F0; --card:#FFFFFF; }
-    /* Header gradient + subtle flares */
     .brand-gradient {
       background:
         radial-gradient(1200px 300px at 15% -10%, rgba(255,255,255,.18), transparent 60%),
@@ -24,7 +23,6 @@
     .badge { background: var(--pill); }
     .truncate-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .truncate-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-    .srch input::placeholder{ color:#E7EAF0; }
     .file-ico {display:grid;place-items:center;border-radius:14px;border:1px solid rgba(203,213,225,.6);height:44px;width:44px;}
     .ico-docx{background:#EEF2FF;color:#3730A3;border-color:#C7D2FE;}
     .ico-pdf{background:#FEE2E2;color:#991B1B;border-color:#FECACA;}
@@ -39,20 +37,21 @@
     .btn-chip { border:1px solid #E5E7EB; background:#FFFFFF; }
     .btn-chip.active { background:#0F172A; color:white; border-color:#0F172A; }
     .drawer-open { transform: translateX(0) !important; }
-    /* Floating buttons stack */
     .fab { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
     .fab > button { box-shadow: 0 10px 24px rgba(15,23,42,.2); }
-    /* Slide-in overlays */
     .overlay { transform: translateX(105%); }
     .overlay-open { transform: translateX(0) !important; }
-    /* Transcript styling (shared) */
     .transcript { max-height: 320px; overflow: auto; border:1px solid #E5E7EB; border-radius: 12px; padding:.75rem; }
     .transcript mark { background: #FEF3C7; }
+    /* Tiny action buttons in the Acronyms list */
+    .tiny-btn{font-size:.72rem;border:1px solid #E2E8F0;border-radius:8px;padding:.15rem .45rem}
+    .tiny-btn:hover{background:#F8FAFC}
+    .tiny-btn.danger{border-color:#FCA5A5;color:#991B1B}
   </style>
 </head>
 <body class="bg-white text-slate-800 selection:bg-rose-100 selection:text-rose-900">
 
-  <!-- Header (clean; no top-right buttons) -->
+  <!-- Header -->
   <header class="brand-gradient text-white sticky-h">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
       <div class="flex items-center justify-start gap-4">
@@ -147,12 +146,10 @@
   <!-- Footer with bigger Centric logo -->
   <footer class="border-t">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
-      <!-- Left: TASC -->
       <div class="flex items-center gap-3 min-w-0">
         <img id="tascLogo" src="assets/tasc-logo.png" alt="TASC" class="h-12 sm:h-14 lg:h-16 w-auto object-contain">
         <span class="text-xs text-slate-500 truncate">© TASC – B.R.I.D.G.E. To Home</span>
       </div>
-      <!-- Right: Centric (larger) -->
       <div class="flex items-center gap-2 shrink-0">
         <span class="text-xs text-slate-500">Prepared by</span>
         <img id="centricLogo" src="assets/centric-logo.png" alt="Centric Strategies" class="h-14 sm:h-16 lg:h-20 w-auto object-contain">
@@ -161,7 +158,7 @@
     </div>
   </footer>
 
-  <!-- Floating buttons: Acronyms + Year-1 Budget -->
+  <!-- Floating buttons: Acronyms + Year-1 Budget + Location Finder -->
   <div class="fab flex flex-col gap-2">
     <button id="openAcronyms"
             class="rounded-full bg-white text-slate-900 border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
@@ -171,9 +168,13 @@
             class="rounded-full bg-white text-slate-900 border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
       Year-1 Budget
     </button>
+    <button id="openLocation"
+            class="rounded-full bg-white text-slate-900 border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+      Location Finder
+    </button>
   </div>
 
-  <!-- Acronyms Overlay -->
+  <!-- Acronyms Overlay (editable) -->
   <aside id="acronymsPanel" class="overlay fixed inset-y-0 right-0 w-full max-w-xl bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 z-[70]">
     <div class="h-full flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b">
@@ -185,15 +186,44 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M6 18 18 6"/></svg>
         </button>
       </div>
-      <div class="p-5 border-b">
+
+      <!-- Acronyms Toolbar -->
+      <div class="px-5 py-3 border-b flex items-center gap-2 flex-wrap">
         <div class="relative">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
           </span>
           <input id="acrSearch" type="text" placeholder="Search acronyms or definitions…"
-                 class="w-full rounded-xl bg-white text-slate-900 pl-9 pr-3 py-2 ring-1 ring-slate-200 focus:ring-2 focus:ring-slate-400 outline-none"/>
+                 class="w-64 rounded-xl bg-white text-slate-900 pl-9 pr-3 py-2 ring-1 ring-slate-200 focus:ring-2 focus:ring-slate-400 outline-none"/>
+        </div>
+        <div class="ml-auto flex items-center gap-2">
+          <button id="acrToggleEdit" class="btn btn-ghost">Enable Edit</button>
+          <button id="acrAddNew" class="btn btn-primary">Add New</button>
+          <button id="acrReset" class="btn btn-ghost">Reset to Defaults</button>
         </div>
       </div>
+
+      <!-- Add/Update form -->
+      <div id="acrFormWrap" class="px-5 py-3 border-b hidden">
+        <form id="acrForm" class="grid grid-cols-1 gap-3">
+          <div class="grid grid-cols-3 gap-2">
+            <label class="col-span-1 text-sm text-slate-600">Acronym</label>
+            <input id="acrKey" type="text" required
+                   class="col-span-2 rounded-lg border border-slate-300 px-2 py-1 text-sm" placeholder="e.g., HQS">
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="col-span-1 text-sm text-slate-600">Definition</label>
+            <textarea id="acrVal" rows="3" required
+                      class="col-span-2 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+                      placeholder="Write the definition here…"></textarea>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button id="acrCancel" type="button" class="btn btn-ghost">Cancel</button>
+          </div>
+        </form>
+      </div>
+
       <div class="p-0 overflow-y-auto">
         <ul id="acrList" class="divide-y divide-slate-100"></ul>
       </div>
@@ -202,6 +232,11 @@
   <div id="acronymsBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[65] hidden"></div>
 
   <!-- Year-1 Budget Overlay -->
+  <!-- files needed:
+       assets/media/budget-calculator.mp4
+       assets/media/GMT20251003-130246_Recording.transcript.vtt
+       docs/Client_Budget_Calculator_v2.xlsx
+       docs/Draft Year one Budget.docx -->
   <aside id="budgetPanel" class="overlay fixed inset-y-0 right-0 w-full max-w-2xl bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 z-[70]">
     <div class="h-full flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b">
@@ -214,12 +249,10 @@
         </button>
       </div>
       <div class="p-5 space-y-4 overflow-y-auto">
-        <!-- Video -->
         <video id="budgetVideo" controls preload="metadata" class="w-full aspect-video bg-black rounded-xl"
-               src="assets/media/Budget-calculator.mp4">
+               src="assets/media/budget-calculator.mp4">
           Sorry—your browser can’t play this video.
         </video>
-        <!-- Downloads -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a href="docs/Client_Budget_Calculator_v2.xlsx" download class="btn btn-primary justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8v8M8 8v8M4 12h16"/></svg>
@@ -230,7 +263,6 @@
             Download Year-1 Budget (.docx)
           </a>
         </div>
-        <!-- Transcript -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <h4 class="font-semibold">Transcript</h4>
@@ -247,6 +279,54 @@
     </div>
   </aside>
   <div id="budgetBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[65] hidden"></div>
+
+  <!-- Location Finder Overlay -->
+  <!-- files needed:
+       assets/media/Location_Finder.mp4
+       assets/media/GMT20251003-143103_Recording.transcript.vtt
+       docs/Location_Finder.xlsm -->
+  <aside id="locationPanel" class="overlay fixed inset-y-0 right-0 w-full max-w-2xl bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 z-[70]">
+    <div class="h-full flex flex-col">
+      <div class="flex items-center justify-between px-5 py-4 border-b">
+        <div>
+          <h3 class="text-lg font-semibold">Location Finder Helper</h3>
+          <p class="text-xs text-slate-500">Video • Excel (macro-enabled) • Transcript</p>
+        </div>
+        <button id="closeLocation" class="rounded-lg px-2 py-1 hover:bg-slate-100" aria-label="Close location panel">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-4 overflow-y-auto">
+        <video id="locationVideo" controls preload="metadata" class="w-full aspect-video bg-black rounded-xl"
+               src="assets/media/Location_Finder.mp4">
+          Sorry—your browser can’t play this video.
+        </video>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <a href="docs/Location_Finder.xlsm" download class="btn btn-primary justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8v8M8 8v8M4 12h16"/></svg>
+            Download Location Finder (.xlsm)
+          </a>
+          <a href="docs/Location_Finder.xlsm" class="btn btn-ghost justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            Open (if supported)
+          </a>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-semibold">Transcript</h4>
+            <div class="flex items-center gap-2">
+              <input id="trSearchLF" type="text" placeholder="Find in transcript…" class="rounded-lg border border-slate-300 px-2 py-1 text-sm">
+              <button id="btnJumpLF" class="btn btn-ghost text-sm">Jump to Filtering tips</button>
+            </div>
+          </div>
+          <div id="transcriptLF" class="transcript text-sm text-slate-700">
+            <div class="text-sm text-slate-500">Loading transcript…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div id="locationBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[65] hidden"></div>
 
   <script>
     // -------------------------
@@ -344,9 +424,9 @@
     ];
 
     // -------------------------
-    // DATA: Acronyms
+    // Acronyms (editable via localStorage)
     // -------------------------
-    const ACRONYMS = [
+    const ACRONYMS_DEFAULT = [
       ["ACH","Automated Clearing House (electronic bank transfer for payments)"],
       ["ADA","Americans with Disabilities Act (accessibility requirements)"],
       ["AP","Accounts Payable (finance function paying invoices)"],
@@ -388,6 +468,20 @@
       ["TASC","Treatment Alternatives for Safe Communities (lead agency)"],
       ["W-9","IRS Request for Taxpayer Identification (vendor onboarding)"]
     ];
+    const ACR_LS_KEY = "acrCustom"; // { overrides:{KEY:def}, deletions:[KEY,...] }
+    function loadCustomAcr() {
+      try { return JSON.parse(localStorage.getItem(ACR_LS_KEY)) || {overrides:{}, deletions:[]}; }
+      catch { return {overrides:{}, deletions:[]}; }
+    }
+    function saveCustomAcr(custom) { localStorage.setItem(ACR_LS_KEY, JSON.stringify(custom)); }
+    function resetCustomAcr() { localStorage.removeItem(ACR_LS_KEY); }
+    function getEffectiveAcronyms() {
+      const custom = loadCustomAcr(); const map = new Map();
+      ACRONYMS_DEFAULT.forEach(([k,v]) => map.set(k,v));
+      Object.entries(custom.overrides||{}).forEach(([k,v]) => map.set(k,v));
+      (custom.deletions||[]).forEach(k => map.delete(k));
+      return Array.from(map.entries());
+    }
 
     // -------------------------
     // UI Helpers
@@ -401,30 +495,10 @@
       { name: "Roles" },
       { name: "Workflows" },
     ];
-    function iconFor(href){
-      const n = href.toLowerCase();
-      if (n.endsWith(".pdf")) return "pdf";
-      if (n.endsWith(".xlsx") || n.endsWith(".xls")) return "xlsx";
-      if (n.endsWith(".docx") || n.endsWith(".doc")) return "docx";
-      return "generic";
-    }
-    function iconClass(kind){
-      return kind === "pdf" ? "ico-pdf" :
-             kind === "xlsx" ? "ico-xlsx" :
-             kind === "docx" ? "ico-docx" : "ico-generic";
-    }
-    function pill(label){
-      return `<span class="badge inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-slate-700">${label}</span>`;
-    }
-    function countByCategory(){
-      const counts = Object.create(null);
-      for (const c of categories) counts[c.name]=0;
-      for (const d of DOCS){
-        counts[d.category] = (counts[d.category]||0)+1;
-        counts["All Documents"] = (counts["All Documents"]||0)+1;
-      }
-      return counts;
-    }
+    function iconFor(href){ const n=href.toLowerCase(); if(n.endsWith(".pdf"))return"pdf"; if(n.endsWith(".xlsx")||n.endsWith(".xls")||n.endsWith(".xlsm"))return"xlsx"; if(n.endsWith(".docx")||n.endsWith(".doc"))return"docx"; return"generic"; }
+    function iconClass(kind){ return kind==="pdf"?"ico-pdf": kind==="xlsx"?"ico-xlsx": kind==="docx"?"ico-docx":"ico-generic"; }
+    function pill(label){ return `<span class="badge inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-slate-700">${label}</span>`; }
+    function countByCategory(){ const cts={}; categories.forEach(c=>cts[c.name]=0); DOCS.forEach(d=>{ cts[d.category]=(cts[d.category]||0)+1; cts["All Documents"]=(cts["All Documents"]||0)+1; }); return cts; }
 
     // -------------------------
     // State
@@ -432,7 +506,7 @@
     let state = { q:"", category:"All Documents", sort:"relevance" };
 
     // -------------------------
-    // Filters (chip-style)
+    // Filters
     // -------------------------
     function renderFilters(){
       const holder = document.getElementById("filters");
@@ -444,12 +518,8 @@
           <span class="text-[10px] opacity-75 ml-1">${counts[cat.name]||0}</span>
         </button>`;
       }).join("");
-
       holder.querySelectorAll("button").forEach(btn => {
-        btn.addEventListener("click", e => {
-          state.category = e.currentTarget.dataset.cat;
-          renderFilters(); renderCards();
-        });
+        btn.addEventListener("click", e => { state.category = e.currentTarget.dataset.cat; renderFilters(); renderCards(); });
       });
     }
 
@@ -458,47 +528,38 @@
     // -------------------------
     async function loadExternalSummaries(){
       await Promise.all(DOCS.map(async d => {
-        try {
-          const name = d.href.split("/").pop();
-          const res = await fetch(encodeURI("summaries/" + name + ".txt"));
-          if (res.ok) d.summary = await res.text();
-        } catch(_) {}
+        try { const name = d.href.split("/").pop(); const res = await fetch(encodeURI("summaries/" + name + ".txt")); if (res.ok) d.summary = await res.text(); }
+        catch(_) {}
       }));
     }
 
     // -------------------------
     // Search & Sort
     // -------------------------
-    function haystack(d){
-      return (d.title + " " + (d.blurb||"") + " " + (d.summary||"")).toLowerCase();
-    }
+    function haystack(d){ return (d.title + " " + (d.blurb||"") + " " + (d.summary||"")).toLowerCase(); }
     function sortDocs(arr){
-      const s = state.sort;
-      if (s === "az") return [...arr].sort((a,b)=>a.title.localeCompare(b.title));
-      if (s === "za") return [...arr].sort((a,b)=>b.title.localeCompare(a.title));
-      if (s === "category") return [...arr].sort((a,b)=> (a.category.localeCompare(b.category)) || a.title.localeCompare(b.title));
-      return arr; // relevance
+      const s=state.sort;
+      if (s==="az") return [...arr].sort((a,b)=>a.title.localeCompare(b.title));
+      if (s==="za") return [...arr].sort((a,b)=>b.title.localeCompare(a.title));
+      if (s==="category") return [...arr].sort((a,b)=> (a.category.localeCompare(b.category)) || a.title.localeCompare(b.title));
+      return arr;
     }
 
     // -------------------------
-    // Drawer (document details)
+    // Drawer
     // -------------------------
     function openDrawer(d){
       document.getElementById("drawerTitle").textContent = d.title;
       document.getElementById("drawerBlurb").textContent = (d.summary || d.blurb || "");
       const fn = d.href.split("/").pop();
-      const view = document.getElementById("drawerView");
+      document.getElementById("drawerView").setAttribute("href", encodeURI(d.href));
       const down = document.getElementById("drawerDownload");
-      view.setAttribute("href", encodeURI(d.href));
       down.setAttribute("href", encodeURI(d.href));
       down.setAttribute("download", fn);
       document.getElementById("drawer").classList.add("drawer-open");
       document.getElementById("drawerBackdrop").classList.remove("hidden");
     }
-    function closeDrawer(){
-      document.getElementById("drawer").classList.remove("drawer-open");
-      document.getElementById("drawerBackdrop").classList.add("hidden");
-    }
+    function closeDrawer(){ document.getElementById("drawer").classList.remove("drawer-open"); document.getElementById("drawerBackdrop").classList.add("hidden"); }
     document.getElementById("drawerClose").addEventListener("click", closeDrawer);
     document.getElementById("drawerBackdrop").addEventListener("click", closeDrawer);
 
@@ -508,12 +569,7 @@
     function renderCards(){
       const grid = document.getElementById("cardsGrid");
       const q = state.q.toLowerCase();
-
-      const filtered = DOCS.filter(d => {
-        const inCat = state.category === "All Documents" || d.category === state.category;
-        const inSearch = !q || haystack(d).includes(q);
-        return inCat && inSearch;
-      });
+      const filtered = DOCS.filter(d => (state.category==="All Documents" || d.category===state.category) && (!q || haystack(d).includes(q)));
       const sorted = sortDocs(filtered);
 
       grid.innerHTML = sorted.map((d, i) => {
@@ -545,47 +601,123 @@
         </div>`;
       }).join("");
 
-      grid.querySelectorAll(".card").forEach((el, idx) => {
-        el.addEventListener("click", () => openDrawer(sorted[idx]));
-      });
-
+      grid.querySelectorAll(".card").forEach((el, idx) => el.addEventListener("click", () => openDrawer(sorted[idx])));
       document.getElementById("docCount").textContent = DOCS.length;
     }
 
     // -------------------------
-    // Acronyms overlay logic
+    // Acronyms overlay logic (editable)
     // -------------------------
     const acrPanel = document.getElementById('acronymsPanel');
     const acrBackdrop = document.getElementById('acronymsBackdrop');
-    document.getElementById('openAcronyms').addEventListener('click', ()=> {
+    const btnOpenAcr = document.getElementById('openAcronyms');
+    const btnCloseAcr = document.getElementById('closeAcronyms');
+
+    btnOpenAcr.addEventListener('click', ()=> {
       acrPanel.classList.add('overlay-open');
       acrBackdrop.classList.remove('hidden');
       document.getElementById('acrSearch').focus();
+      renderAcrList(); // refresh each open
     });
     function closeAcr(){ acrPanel.classList.remove('overlay-open'); acrBackdrop.classList.add('hidden'); }
-    document.getElementById('closeAcronyms').addEventListener('click', closeAcr);
+    btnCloseAcr.addEventListener('click', closeAcr);
     acrBackdrop.addEventListener('click', closeAcr);
 
+    let acrEditMode = false;
+    let acrEditingKey = null;
+
+    const acrSearchEl = document.getElementById('acrSearch');
+    const acrListEl = document.getElementById('acrList');
+    const acrToggleEdit = document.getElementById('acrToggleEdit');
+    const acrAddNew = document.getElementById('acrAddNew');
+    const acrReset = document.getElementById('acrReset');
+    const acrFormWrap = document.getElementById('acrFormWrap');
+    const acrForm = document.getElementById('acrForm');
+    const acrKey = document.getElementById('acrKey');
+    const acrVal = document.getElementById('acrVal');
+    const acrCancel = document.getElementById('acrCancel');
+
+    acrSearchEl.addEventListener('input', ()=> renderAcrList(acrSearchEl.value));
+
     function renderAcrList(q=""){
-      const list = document.getElementById('acrList');
-      const txt = q.trim().toLowerCase();
-      const items = ACRONYMS
+      const txt = (q||"").trim().toLowerCase();
+      const items = getEffectiveAcronyms()
         .filter(([k,v]) => !txt || k.toLowerCase().includes(txt) || v.toLowerCase().includes(txt))
         .sort((a,b)=> a[0].localeCompare(b[0]));
-      list.innerHTML = items.map(([k,v]) => `
+
+      acrListEl.innerHTML = items.map(([k,v]) => `
         <li class="px-5 py-3">
-          <div class="text-sm font-semibold text-slate-800">${k}</div>
-          <div class="text-sm text-slate-600">${v}</div>
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="text-sm font-semibold text-slate-800">${k}</div>
+              <div class="text-sm text-slate-600">${v}</div>
+            </div>
+            ${acrEditMode ? `
+              <div class="shrink-0 flex items-center gap-2">
+                <button class="tiny-btn" data-edit="${k}">Edit</button>
+                <button class="tiny-btn danger" data-del="${k}">Delete</button>
+              </div>` : ``}
+          </div>
         </li>
       `).join('');
+
+      if (acrEditMode) {
+        acrListEl.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', ()=> startEdit(b.dataset.edit)));
+        acrListEl.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> delAcr(b.dataset.del)));
+      }
       if (!items.length){
-        list.innerHTML = `<li class="px-5 py-6 text-sm text-slate-500">No matches. Try another term.</li>`;
+        acrListEl.innerHTML = `<li class="px-5 py-6 text-sm text-slate-500">No matches. Try another term.</li>`;
       }
     }
-    document.getElementById('acrSearch').addEventListener('input', (e)=> renderAcrList(e.target.value));
+    acrToggleEdit.addEventListener('click', ()=>{
+      acrEditMode = !acrEditMode;
+      acrFormWrap.classList.add('hidden');
+      acrEditingKey = null;
+      acrToggleEdit.textContent = acrEditMode ? "Disable Edit" : "Enable Edit";
+      renderAcrList(acrSearchEl.value);
+    });
+    acrAddNew.addEventListener('click', ()=>{
+      acrEditingKey = null; acrKey.value = ""; acrVal.value = "";
+      acrFormWrap.classList.remove('hidden'); acrKey.focus();
+    });
+    acrReset.addEventListener('click', ()=>{
+      if (!confirm("Reset all changes and custom acronyms to defaults?")) return;
+      resetCustomAcr(); acrFormWrap.classList.add('hidden'); acrEditingKey = null; renderAcrList(acrSearchEl.value);
+    });
+    function startEdit(key){
+      const eff = new Map(getEffectiveAcronyms());
+      acrEditingKey = key; acrKey.value = key; acrVal.value = eff.get(key) || "";
+      acrFormWrap.classList.remove('hidden'); acrKey.focus();
+    }
+    function delAcr(key){
+      const custom = loadCustomAcr();
+      if (custom.overrides?.[key]) delete custom.overrides[key];
+      if (!custom.deletions) custom.deletions = [];
+      if (!custom.deletions.includes(key)) custom.deletions.push(key);
+      saveCustomAcr(custom);
+      if (acrEditingKey === key) { acrEditingKey = null; acrFormWrap.classList.add('hidden'); }
+      renderAcrList(acrSearchEl.value);
+    }
+    acrForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const kNew = acrKey.value.trim(); const vNew = acrVal.value.trim();
+      if (!kNew || !vNew) return;
+      const custom = loadCustomAcr();
+      if (acrEditingKey && acrEditingKey !== kNew) {
+        if (custom.overrides?.[acrEditingKey]) delete custom.overrides[acrEditingKey];
+        if (!custom.deletions) custom.deletions = [];
+        if (!custom.deletions.includes(acrEditingKey)) custom.deletions.push(acrEditingKey);
+      }
+      custom.deletions = (custom.deletions||[]).filter(k => k !== kNew);
+      custom.overrides = custom.overrides || {};
+      custom.overrides[kNew] = vNew;
+      saveCustomAcr(custom);
+      acrEditingKey = null; acrFormWrap.classList.add('hidden'); renderAcrList(acrSearchEl.value);
+    });
+    acrCancel.addEventListener('click', ()=>{ acrEditingKey = null; acrFormWrap.classList.add('hidden'); });
 
     // -------------------------
-    // Transcript helpers (shared by Budget overlay)
+    // Transcript helpers
     // -------------------------
     async function loadVTT(url){
       const res = await fetch(url);
@@ -636,8 +768,29 @@
       wrap.querySelectorAll('button[data-jump]').forEach(b=>{
         b.addEventListener('click', ()=>{
           const v = document.getElementById('budgetVideo');
-          v.currentTime = parseFloat(b.dataset.jump||"0");
-          v.play().catch(()=>{});
+          v.currentTime = parseFloat(b.dataset.jump||"0"); v.play().catch(()=>{});
+        });
+      });
+    }
+    function renderTranscriptLF(cues, filter=""){
+      const wrap = document.getElementById('transcriptLF');
+      const needle = filter.trim().toLowerCase();
+      wrap.innerHTML = cues.map(({t,text})=>{
+        let shown = text;
+        if(needle){
+          shown = shown.replace(new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), m=>`<mark>${m}</mark>`);
+        }
+        const hh = Math.floor(t/3600), mm=Math.floor((t%3600)/60), ss=Math.floor(t%60);
+        const stamp = (hh>0? String(hh).padStart(2,'0')+':':'') + String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+        return `<div class="py-1.5">
+          <button class="text-xs text-rose-700 hover:underline" data-jump="${t}">[${stamp}]</button>
+          <span class="ml-2">${shown}</span>
+        </div>`;
+      }).join('');
+      wrap.querySelectorAll('button[data-jump]').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          const v = document.getElementById('locationVideo');
+          v.currentTime = parseFloat(b.dataset.jump||"0"); v.play().catch(()=>{});
         });
       });
     }
@@ -669,9 +822,7 @@
       closeBtn?.addEventListener('click', close);
       backd?.addEventListener('click', close);
 
-      trSearch?.addEventListener('input', (e)=>{
-        if(cuesCache) renderTranscript(cuesCache, e.target.value);
-      });
+      trSearch?.addEventListener('input', (e)=>{ if(cuesCache) renderTranscript(cuesCache, e.target.value); });
 
       btnJump?.addEventListener('click', ()=>{
         const v = document.getElementById('budgetVideo');
@@ -682,17 +833,53 @@
     })();
 
     // -------------------------
-    // Events
+    // Location Finder overlay logic
+    // -------------------------
+    (function wireLocationOverlay(){
+      const openBtn = document.getElementById('openLocation');
+      const panel   = document.getElementById('locationPanel');
+      const backd   = document.getElementById('locationBackdrop');
+      const closeBtn= document.getElementById('closeLocation');
+      const trSearch= document.getElementById('trSearchLF');
+      const btnJump = document.getElementById('btnJumpLF');
+      let cuesCache = null;
+
+      function open(){
+        panel.classList.add('overlay-open');
+        backd.classList.remove('hidden');
+        if(!cuesCache){
+          loadVTT('assets/media/GMT20251003-143103_Recording.transcript.vtt')
+            .then(cues => { cuesCache = cues; renderTranscriptLF(cuesCache); })
+            .catch(()=>{ document.getElementById('transcriptLF').innerHTML = '<div class="text-sm text-slate-500">Transcript not found.</div>'; });
+        }
+      }
+      function close(){ panel.classList.remove('overlay-open'); backd.classList.add('hidden'); }
+
+      openBtn?.addEventListener('click', open);
+      closeBtn?.addEventListener('click', close);
+      backd?.addEventListener('click', close);
+
+      trSearch?.addEventListener('input', (e)=>{
+        if(cuesCache) renderTranscriptLF(cuesCache, e.target.value);
+      });
+
+      btnJump?.addEventListener('click', ()=>{
+        const v = document.getElementById('locationVideo');
+        if(!cuesCache) return;
+        const hit = cuesCache.find(c => /filter|county|distance|map|search/i.test(c.text));
+        if(hit){ v.currentTime = hit.t; v.play().catch(()=>{}); trSearch.value = "filter"; renderTranscriptLF(cuesCache, "filter"); }
+      });
+    })();
+
+    // -------------------------
+    // Events & Init
     // -------------------------
     document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
     document.getElementById("sortSel").addEventListener("change", (e)=>{ state.sort = e.target.value; renderCards(); });
 
-    // -------------------------
-    // Init
-    // -------------------------
     (async function init(){
       renderFilters();
-      await loadExternalSummaries(); // optional override support
+      await loadExternalSummaries();
       renderCards();
       renderAcrList();
     })();

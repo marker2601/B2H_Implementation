@@ -2,70 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B2H Implementation Plan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>B2H Implementation Library</title>
+  <meta name="color-scheme" content="light only">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    :root { --brand:#C2185B; --brandDark:#9B1349; --pill:#F1F5F9; }
     html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+    :root {
+      --brand:#C2185B; --brandDark:#9B1349; --ink:#0F172A; --pill:#F1F5F9;
+      --slate:#64748B; --line:#E2E8F0; --card:#FFFFFF;
+    }
     .brand-gradient { background: linear-gradient(180deg, var(--brand) 0%, var(--brandDark) 100%); }
-    .card:hover { box-shadow: 0 10px 24px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06); transform: translateY(-1px); }
+    .glass { background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.08)); backdrop-filter: blur(8px); }
+    .card { transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 18px 44px rgba(2, 6, 23, .08), 0 2px 6px rgba(2,6,23,.06); }
     .badge { background: var(--pill); }
-    .truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .srch input::placeholder{ color:#9AA0A6; }
+    .truncate-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .truncate-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .srch input::placeholder{ color:#E7EAF0; }
+    .file-ico {display:grid;place-items:center;border-radius:14px;border:1px solid rgba(203,213,225,.6);height:42px;width:42px;}
+    .ico-docx{background:#EEF2FF;color:#3730A3;border-color:#C7D2FE;}
+    .ico-pdf{background:#FEE2E2;color:#991B1B;border-color:#FECACA;}
+    .ico-xlsx{background:#DCFCE7;color:#166534;border-color:#BBF7D0;}
+    .ico-generic{background:#E2E8F0;color:#334155;border-color:#CBD5E1;}
+    .sticky-h { position: sticky; top: 0; z-index: 30; }
+    .btn { display:inline-flex;align-items:center;gap:.5rem;border-radius:12px;font-weight:600;font-size:.875rem;padding:.5rem .85rem }
+    .btn-primary { background:#0F172A;color:white }
+    .btn-primary:hover { background:#111827 }
+    .btn-ghost { background:transparent;border:1px solid var(--line); }
+    .btn-ghost:hover { background:#F8FAFC }
+    .btn-soft { background:#0F172A0D;color:#0F172A;border:1px solid #0F172A1A }
+    .btn-soft:hover { background:#0F172A1A }
+    .drawer-open { transform: translateX(0) !important; }
   </style>
 </head>
-<body class="bg-white text-slate-800">
-  <!-- Header -->
-  <header class="brand-gradient text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div class="flex items-center justify-between">
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">B2H Implementation Plan</h1>
-        <div class="flex items-center gap-3">
-          <a href="#" class="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 px-3.5 py-2 text-sm font-medium backdrop-blur-md transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.761 0 5-2.239 5-5S14.761 2 12 2 7 4.239 7 7s2.239 5 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z"/></svg>
+<body class="bg-white text-slate-800 selection:bg-rose-100 selection:text-rose-900">
+
+  <!-- Sticky Header -->
+  <header class="brand-gradient text-white sticky-h">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">B2H Implementation Library</h1>
+          <p class="mt-0.5 text-sm text-white/90">
+            <span id="docCount">0</span> documents • Search across titles, blurbs, and detailed summaries
+          </p>
+        </div>
+        <div class="hidden md:flex items-center gap-2">
+          <a class="btn btn-soft" href="#" title="Roles & Responsibilities">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>
             Roles & Responsibilities
           </a>
-          <a href="#" class="inline-flex items-center gap-2 rounded-xl bg-white text-slate-900 hover:bg-slate-100 px-3.5 py-2 text-sm font-medium transition">
+          <a class="btn btn-ghost bg-white text-slate-900 hover:bg-slate-100" href="#" title="Upload (placeholder)">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-            Upload Document
+            Upload
           </a>
         </div>
       </div>
-      <p class="mt-1 text-sm text-white/90"><span id="docCount">0</span> documents</p>
-      <div class="mt-5 srch">
-        <label class="block">
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-white/70">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" />
-              </svg>
-            </span>
-            <input id="searchInput" type="text" placeholder="Search implementation plan documents..."
-                   class="w-full rounded-2xl bg-white/10 text-white placeholder-white/80 pl-10 pr-4 py-3 outline-none ring-1 ring-white/25 focus:ring-2 focus:ring-white/60" />
+
+      <!-- Search + Sort -->
+      <div class="mt-5 grid grid-cols-1 md:grid-cols-7 gap-3 items-center">
+        <div class="md:col-span-5">
+          <label class="block">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-white/80">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" />
+                </svg>
+              </span>
+              <input id="searchInput" type="text" placeholder="Search by topic, task, role, or document name..."
+                     class="w-full rounded-2xl bg-white/10 text-white placeholder-white/80 pl-10 pr-4 py-3 outline-none ring-1 ring-white/25 focus:ring-2 focus:ring-white/60"/>
+            </div>
+          </label>
+        </div>
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2">
+            <label for="sortSel" class="text-sm text-white/90">Sort</label>
+            <select id="sortSel" class="w-full rounded-xl bg-white/10 text-white px-3 py-2 ring-1 ring-white/25 focus:ring-2 focus:ring-white/60">
+              <option value="relevance">Relevance</option>
+              <option value="az">Title A→Z</option>
+              <option value="za">Title Z→A</option>
+              <option value="category">Category</option>
+            </select>
           </div>
-        </label>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Main -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-24">
-    <div class="mb-6">
-      <h2 class="text-sm font-semibold tracking-wide text-slate-500">
-        B.R.I.D.G.E. To Home – <span class="font-normal">Building Resilience, Independence, Dignity, Growth, Empowerment</span>
-      </h2>
-    </div>
-
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Filters -->
       <aside class="lg:col-span-3">
-        <h3 class="text-sm font-semibold text-slate-600 mb-3">Categories</h3>
-        <div id="filters" class="space-y-1"></div>
+        <div class="rounded-2xl border border-slate-200 p-4">
+          <h3 class="text-sm font-semibold text-slate-700 mb-2">Categories</h3>
+          <div id="filters" class="space-y-1"></div>
+          <hr class="my-4"/>
+          <p class="text-xs text-slate-500">Tip: you can also search things like “inspection”, “invoice”, “triage”, “ISH/ESH”, or “onboarding”.</p>
+        </div>
       </aside>
 
+      <!-- Cards -->
       <section class="lg:col-span-9">
         <div id="cardsGrid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
       </section>
@@ -73,7 +114,7 @@
   </main>
 
   <!-- Details Drawer -->
-  <aside id="drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 z-50">
+  <aside id="drawer" class="fixed inset-y-0 right-0 w-full max-w-lg bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 z-50">
     <div class="h-full flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b">
         <h3 id="drawerTitle" class="text-lg font-semibold">Document</h3>
@@ -82,13 +123,15 @@
         </button>
       </div>
       <div class="p-5 space-y-4 overflow-y-auto">
-        <p id="drawerBlurb" class="text-sm text-slate-700"></p>
+        <div class="text-sm text-slate-600">
+          <p id="drawerBlurb" class="whitespace-pre-line"></p>
+        </div>
         <div class="flex items-center gap-3">
-          <a id="drawerView" href="#" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium">
+          <a id="drawerView" href="#" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
             View
           </a>
-          <a id="drawerDownload" href="#" class="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 px-3 py-1.5 text-xs font-medium">
+          <a id="drawerDownload" href="#" class="btn btn-ghost">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
             Download
           </a>
@@ -98,410 +141,150 @@
   </aside>
   <div id="drawerBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40 hidden"></div>
 
-  <footer class="border-t py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-      <div class="text-xs text-slate-500">© TASC – Treatment Alternatives for Safe Communities</div>
-      <a href="#" class="text-xs text-slate-500 hover:text-slate-700">Theme</a>
+  <!-- Footer -->
+  <footer class="border-t">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex items-center justify-between">
+      <div class="text-xs text-slate-500">© TASC – B.R.I.D.G.E. To Home</div>
+      <div class="text-xs text-slate-500">
+        Built with ❤️ + Tailwind
+      </div>
     </div>
   </footer>
 
   <script>
-    // ---------- DATA (exact filenames in /docs/) ----------
+    // -------------------------
+    // Data: EXACT filenames in /docs/
+    // -------------------------
     const DOCS = [
-     // --- Batch 1: five files with detailed human-written summaries ---
+      // Batch 1
+      { title:"24/7 Hotline SOP (Landlords & Participants)", blurb:"Always-available contact pathway; triage, escalation, documentation, follow-up.", href:"docs/24x7_Hotline_SOP.docx", tag:"Protocols", category:"Protocols",
+        summary:"Standard operating procedures for the B2H hotline covering purpose, scope, definitions, hours/access, RACI roles (Triage Specialist, On-Call Case Manager, Supervisor, PQI/Data), and verification steps. Includes a decision tree for life-safety (911 guidance and notifications), urgent non-life-safety (lockout, leaks, heat outage, welfare checks) with warm transfers and paging rules, and routine requests (AP/billing, minor maintenance) queued to case managers. Sets response SLAs (pickup, callback, escalation), ready-to-use scripts, and ECR documentation templates (Hotline Incident note, follow-up task, supervisor notification). Addresses special scenarios (behavioral health/SUD distress, bridge housing incidents, law enforcement), on-call scheduling, contingency/outage procedures, metrics/PQI review, privacy/ROI/PHI safeguards, and training/tabletop exercises. Key appendices list call categories and required ECR data elements." },
+      { title:"72 Hour Move In protocol", blurb:"72-hr orientation for tenant/landlord; move-in kit; stabilization.", href:"docs/72 Hour Move In protocol.docx", tag:"Protocols", category:"Protocols",
+        summary:"Structured 72-hour stabilization plan immediately post-placement. Day 1: tenant orientation and unit onboarding (walkthrough, basic operations, lease review/acknowledgment, case management expectations, emergency protocol/24-7 hotline, move-in kit delivery and inventory). Day 2: landlord orientation (program role of TASC, incentives and payment processes, documentation requirements for eligibility, incident/lease-violation reporting, contacts, compliance reminders). Day 3: joint landlord-tenant-case manager meeting to establish rapport, define communication preferences/boundaries, capture concerns/accommodations, align expectations, and document completion forms/ISP updates. Includes a standard move-in kit bill of materials and mandates ECR logging, signatures, and supervisor approval for exceptions." },
+      { title:"Administrator Job Description", blurb:"Operations, compliance, reporting, staff leadership.", href:"docs/Administrator Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Exempt leadership role responsible for daily operations across a wide geography: administration, personnel supervision, IS systems, reporting, and contract/budget deliverables. Core functions: QA/compliance monitoring, performance against benchmarks, data/reporting to funders, policy implementation, team coaching and performance management, HR partnership for recruitment/retention, and external relations with partners/funders/government. Qualifications emphasize master’s (LSW/LCSW or LPC/LCPC preferred), 3+ years supervisory experience in human services/reentry, knowledge of housing/HUD/tenant rights, on-call responsiveness, and ability to work in secured settings." },
+      { title:"Agency Flyer", blurb:"One-page outreach for agencies.", href:"docs/Agency Flyer.pdf", tag:"Partnerships", category:"Partnerships",
+        summary:"Single-page explainer inviting service agencies to partner with B2H: program purpose, eligibility, supports (case management, housing navigation, stabilization), and collaboration cadence. Shows how to engage (contact/QR), expected timelines, and what to bring to the first conversation." },
+      { title:"Agency Partnership Overview", blurb:"Slide deck: program, roles, supports, FAQs, next steps.", href:"docs/Agency_Overview.pdf", tag:"Partnerships", category:"Partnerships",
+        summary:"Deck describing B2H and the central role agencies play in housing stability. Covers program model (placements + wraparound services; intensive case management; 24/7 hotline), agency responsibilities (identify clients, coordinate ISPs with TASC, provide services, participate in case conferencing and reporting), supports to agencies (orientation, clear referrals, housing liaisons, shared resources), FAQs, and next steps (contact B2H, submit LOI/Interest Form, onboarding calls, begin referrals)." },
 
-{
-  title: "24/7 Hotline SOP (Landlords & Participants)",
-  blurb: "Always-available contact pathway; triage, escalation, documentation, follow-up.",
-  href: "docs/24x7_Hotline_SOP.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Formal standard operating procedure for the B2H hotline covering purpose, scope, definitions, hours/access, RACI roles (Triage Specialist, On-Call Case Manager, Supervisor, PQI/Data), and verification steps. Includes a decision tree for life-safety (911 guidance and notifications), urgent non-life-safety (lockout, leaks, heat outage, welfare checks) with warm transfers and paging rules, and routine requests (AP/billing, minor maintenance) queued to case managers. Sets response SLAs (pickup, callback, escalation), ready-to-use scripts, and ECR documentation templates (Hotline Incident note, follow-up task, supervisor notification). Addresses special scenarios (behavioral health/SUD distress, bridge housing incidents, law enforcement), on-call scheduling, contingency/outage procedures, metrics/PQI review, privacy/ROI/PHI safeguards, and training/tabletop exercises. Key appendices list call categories and required ECR data elements. :contentReference[oaicite:0]{index=0}"
-},
+      // Batch 2
+      { title:"Agency Referral Form", blurb:"Submit referrals from TASC to partner agencies.", href:"docs/Agency_Referral_Form.docx", tag:"Workflows", category:"Workflows",
+        summary:"Structured form to connect clients to partner service agencies. Captures referrer details, client identifiers, current housing status, services requested (MH, SUD, employment, education, family), readiness/willingness, barriers (transportation, scheduling), and follow-up workflow (date sent, agency contact, appointment, projected lease-up, verification call, engagement outcomes). Signature lines for referring staff and CM." },
+      { title:"Bridge Housing – Partner Info Sheet", blurb:"Expectations, limits, check-ins, incident response.", href:"docs/Bridge_Housing_Partner_Info_Sheet.docx", tag:"Partnerships", category:"Partnerships",
+        summary:"Overview for bridge-housing partners (hotels/motels, SROs, transitional). Purpose of short-term stays; expectations (habitability, coordination with TASC, monthly invoicing), typical stay limits, support model (regular CM check-ins; 24/7 hotline). Incident response (hotline/911) and partnership types. Next steps to express interest and receive onboarding/invoicing materials." },
+      { title:"Bridge Housing – Referral Form", blurb:"Internal request for short-term bridge housing.", href:"docs/Bridge_Housing_Referral_Form.docx", tag:"Workflows", category:"Workflows",
+        summary:"Internal form to request a bridge placement: referrer info, client identifiers, county, current status, permanent housing timeline, reason (unit not ready, inspection pending, admin delay), preference (hotel/motel, SRO, transitional), special considerations (ADA, proximity). Captures check-in frequency, assigned CM, risk factors, and authorization." },
+      { title:"Case Manager Job Description", blurb:"Core duties & competencies for reentry case management.", href:"docs/Case Manager Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Direct service role delivering specialized reentry case management: intakes and screenings, ISP/stabilization planning, tenancy coaching, home visits, conflict mediation, referrals (BH/employment/legal), move-in supports, ECR documentation, data/outcome tracking, multidisciplinary staffing. Qualifications: bachelor’s preferred; 2+ years CM; Housing First; MS Office; strong facilitation; CADC/CARS timelined; justice-impacted encouraged." },
+      { title:"Client Referral Workflow", blurb:"From IDOC referral to lease-ready placement and stabilization.", href:"docs/Client Referral Workflow.docx", tag:"Workflows", category:"Workflows",
+        summary:"End-to-end process ~90 days pre-release: secure intake packet; quick eligibility; CM assignment; landlord engagement & unit matching; intake & Supportive Housing Eligibility/Readiness Assessment (ISH/ESH); inspection; documentation (ISP, lease, W-9/ACH); supervisory approval; move-in day logistics; 72-hour protocol; post-placement check-ins and outcome tracking at 6/12 months." },
 
-{
-  title: "72 Hour Move In protocol",
-  blurb: "72-hr orientation for tenant/landlord; move-in kit; stabilization.",
-  href: "docs/72 Hour Move In protocol.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Structured 72-hour stabilization plan immediately post-placement. Day 1: tenant orientation and unit onboarding (walkthrough, basic operations, lease review/acknowledgment, case management expectations, emergency protocol/24-7 hotline, move-in kit delivery and inventory). Day 2: landlord orientation (program role of TASC, incentives and payment processes, documentation requirements for eligibility, incident/lease-violation reporting, contacts, compliance reminders). Day 3: joint landlord-tenant-case manager meeting to establish rapport, define communication preferences/boundaries, capture concerns/accommodations, align expectations, and document completion forms/ISP updates. Includes a standard move-in kit bill of materials (bedding, kitchen, cleaning, hygiene, first-aid, misc., optional food) and mandates ECR logging, signatures, and supervisor approval for exceptions. :contentReference[oaicite:1]{index=1}"
-},
+      // Batch 3
+      { title:"Data Coordinator Job Description", blurb:"Performance data entry, QA, and reporting.", href:"docs/Data Coordinator Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Role within PQI focused on data accuracy/completeness, CRM reconciliation, trend analysis, and timely monthly/quarterly reports. Supports ops via master docs and gathering inputs from landlords/stakeholders. Requires 2+ yrs admin + 2+ yrs data entry/reporting, advanced MS Office, and strong attention to detail; includes schedule/travel/background expectations." },
+      { title:"Driver Job Description", blurb:"Transport clients safely between IDOC, housing, and services.", href:"docs/Driver Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Provides transportation from facilities to housing and services. Duties: safe driving, daily/monthly inspections, logs, cost-effective routing, liaison communication, documentation, and policy adherence; plus professional development. Qualifications: HS diploma, valid IL license, 1–2 yrs driving/transport, GPS familiarity, boundaries/confidentiality, CPR/First Aid; background/drug screening." },
+      { title:"Frequently Asked Questions", blurb:"Common questions for landlords and partner agencies.", href:"docs/Frequently Asked Questions.docx", tag:"Overview", category:"Overview",
+        summary:"Two-audience FAQ. Landlords: what B2H is, tenant supports, incentives (vacancy coverage, unit prep, possible advance rent), incident process (hotline), responsibilities, how to start (LOI/Interest Form). Agencies: who you serve, supports (training, coordination tools), how to join (LOI → readiness → onboarding), expectations (collaboration, consistent reporting)." },
+      { title:"Housing Eligibility Screening and Intake & Readiness", blurb:"Screening tool for eligibility and level of care (ISH vs. ESH).", href:"docs/Housing Eligibility Screening and Intake & Readiness.docx", tag:"Assessments", category:"Assessments",
+        summary:"Supportive-housing screening pairing objective criteria with clinical judgment. Captures eligibility, MH diagnoses/meds/adherence, risk (SI/HI), cognition, SUD history, risk level, wraparound needs, and Daily Living Skills ratings. Identifies protective factors and risk indicators; produces a recommendation: ISH, ESH, or higher-acuity referral; includes signatures." },
+      { title:"Housing Match Workflow", blurb:"End-to-end matching steps with legal/service constraints.", href:"docs/Housing Match Workflow.docx", tag:"Workflows", category:"Workflows",
+        summary:"Eight-step matching flow: readiness/level-of-care confirmation; needs & legal restrictions; landlord/unit identification; pre-inspection; match scoring (legal compliance, proximity, readiness, willingness); case conference; lease execution & move-in; stabilization & monitoring (ISH monthly; ESH weekly+)." },
 
-{
-  title: "Administrator Job Description",
-  blurb: "Operations, compliance, reporting, staff leadership.",
-  href: "docs/Administrator Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Exempt leadership role (CTP/B2H) reporting to Director of Operations, responsible for daily program operations across a wide geography: administration, personnel supervision (5+ staff), information systems, reporting, and contract/budget deliverables. Core functions: QA/compliance monitoring, performance against benchmarks, data/reporting to funders, policy implementation, team coaching and performance management, HR partnership for recruitment/retention, and external relations with partners/funders/government. Competencies span planning/organizing, contract/risk management, data utilization, change leadership, and communication. Qualifications emphasize a master’s degree (LSW/LCSW or LPC/LCPC preferred), 3+ years supervisory experience in human services/reentry, knowledge of housing/HUD/tenant rights, on-call responsiveness, and ability to work in secured settings. Lists work environment/physical demands, travel, schedule, and EEO-aligned welcome to lived experience. :contentReference[oaicite:2]{index=2}"
-},
+      // Batch 4
+      { title:"Housing Provider Directory", blurb:"Provider contacts and service areas.", href:"docs/Housing Provider Directory.xlsx", tag:"Overview", category:"Overview",
+        summary:"Master spreadsheet of housing providers for matching and outreach. Typical fields: provider, contact, counties served, unit types, rents, voucher acceptance, notes (reentry-friendly), inspection requirements, and collaboration history. Filter by county, proximity, accessibility, and participation status." },
+      { title:"Implementation Plan", blurb:"Phased plan & milestones.", href:"docs/Implementation Plan.docx", tag:"Overview", category:"Overview",
+        summary:"Six-phase roadmap with milestones/outputs and governance cadence, from feasibility and SOP/template builds to launch, scale/stabilize, and continuous improvement. Includes staffing, bridge vendor onboarding, landlord outreach, go-live checklist, KPI dashboards, PQI audits, and Year-2 planning." },
+      { title:"Incident Triage Decision Tree", blurb:"Safety triage and escalation.", href:"docs/Incident Triage Decision Tree.docx", tag:"Protocols", category:"Protocols",
+        summary:"Decision tree for life-safety vs. urgent vs. routine. Immediate danger → 911 + notify on-call. MH crisis → on-call CM or 911 if escalating. Lease violations → document/report within 24h. Includes de-escalation tips, documentation standards, CM follow-up SLAs (ISH 48h; ESH 24h), hotline intake script, and routing expectations." },
+      { title:"Internal Bridge Housing Protocol", blurb:"Bridge housing guidance.", href:"docs/Internal_Bridge_Housing_Protocol.docx", tag:"Protocols", category:"Protocols",
+        summary:"SOP for short-term bridge placements: referral prerequisites, supervisor approval, vendor setup (codes, agreements, W-9/ACH), default stays ≤90 days with extension rules, check-in cadence, incident response via hotline/911, invoicing verification, and transition/exit planning with final inspection and ECR closure." },
+      { title:"KPIs with Recommend Tracking", blurb:"KPIs for placement, services, stability.", href:"docs/KPIs_with_Recommend Tracking.docx", tag:"Overview", category:"Overview",
+        summary:"Catalog of current and recommended KPIs with tracking methods. Existing: timely placement, ISP completion, BH/medical linkage, 72-Hour protocol, CM touchpoints, retention, landlord engagement, incident response. Recommended: referral-to-placement time, language access, satisfaction, ISP milestones, benefits, employment linkage, landlord retention/reutilization, and legal compliance." },
 
-{
-  title: "Agency Flyer",
-  blurb: "One-page outreach for agencies.",
-  href: "docs/Agency Flyer.pdf",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Single-page explainer inviting service agencies to partner with B2H: what the program is (stable housing + supportive services), who it serves (re-entry population with high barriers), and why to join (robust referral pipeline, coordinated statewide partnerships, training and readiness support). Provides next steps (email/call B2H, submit interest form, attend orientation) and highlights ongoing case conferencing with TASC. Includes QR for quick intake to the Interest Form. :contentReference[oaicite:3]{index=3}"
-},
+      // Batch 5 (Landlords)
+      { title:"Landlord Flyer", blurb:"Why partner, supports, and how to get started.", href:"docs/Landlord Flyer.pdf", tag:"Partnerships", category:"Partnerships",
+        summary:"One-page invite for property owners: program overview (housing + supports), value to landlords (reliable rent, coordinated supports), and how to begin (LOI/Interest Form, orientation). QR for quick start and central contact." },
+      { title:"Landlord Overview Deck", blurb:"Slide deck: program, supports, incentives, FAQs.", href:"docs/Landlord Overview Deck.pdf", tag:"Partnerships", category:"Partnerships",
+        summary:"Presentation for landlords: B2H mission, placement flow, wraparound supports, benefits/incentives, responsibilities, incident handling via hotline, and onboarding steps." },
+      { title:"Landlord Incentive Proposal", blurb:"Proposed menu to recruit and retain landlords.", href:"docs/Landlord_Incentive_Proposal.docx", tag:"Partnerships", category:"Partnerships",
+        summary:"Incentive menu to build a second-chance landlord pipeline: signing bonus, risk-mitigation funds, holding fees, repair/readiness stipends, retention bonus, and optional advance-rent models. Includes eligibility, verification, and administration plan." },
+      { title:"Landlord Invoice and Process", blurb:"Monthly invoice template and payment workflow.", href:"docs/Landlord_Invoice_and_Process.docx", tag:"Partnerships", category:"Partnerships",
+        summary:"Standard invoice package and clear payment flow: vendor code assignment, monthly pre-generated forms, submission reminders, CM occupancy verification, finance cross-check, ACH/check issuance, and signature requirements." },
+      { title:"Landlord Orientation Packet", blurb:"Onboarding packet: program, incentives, HQS, forms, contacts.", href:"docs/Landlord_Orientation_Packet.docx", tag:"Partnerships", category:"Partnerships",
+        summary:"Comprehensive provider onboarding: program intro; population served; 24/7 hotline; incident reporting; incentive options and claim process; compliance (HQS pre-inspection, maintenance SLAs); and forms (lease template, HQS checklist, W-9/ACH, incentive claim, sign-offs)." },
 
-{
-  title: "Agency Partnership Overview",
-  blurb: "Slide deck: program, why partners matter, roles, supports, FAQs, next steps.",
-  href: "docs/Agency_Overview.pdf",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Deck describing the B2H program and the central role agencies play in housing stability. Covers program overview (housing placements + wraparound services; intensive case management; 24/7 hotline), the value of agencies (direct links to behavioral health, employment, skills; early intervention to prevent evictions; statewide collaboration; mission impact), and specific agency responsibilities (identify/ connect clients; develop ISPs with TASC; provide ongoing case management/support; participate in case conferencing and reporting). Details support to agencies (orientation, clear referral pathway, collaboration with housing liaisons, access to resources), an FAQ (who agencies serve, supports provided, incentives/visibility, how to join, expectations), and practical next steps (contact B2H, submit Letter of Intent/Interest Form, onboarding calls, begin referrals). :contentReference[oaicite:4]{index=4}"
-}
-{
-  title: "Agency Referral Form",
-  blurb: "Submit referrals from TASC to partner agencies for services.",
-  href: "docs/Agency_Referral_Form.docx",
-  tag: "Workflows",
-  category: "Workflows",
-  summary: "Structured form to connect clients to partner service agencies. Captures referrer details (name, agency, role, date, contact), key client identifiers (name, DOC #, DOB, projected release), current housing status, and the services requested (e.g., mental health, SUD treatment, employment, education, family/parenting). Includes a readiness section (client awareness/willingness; barriers such as transportation or scheduling), and a follow-up workflow: date sent, agency contact, expected appointment, projected lease-up date, verification call, and engagement outcomes (attended, missed/rescheduled, did not engage). Final section collects signatures from referring staff and (if different) the case manager. :contentReference[oaicite:0]{index=0}"
-},
+      // Batch 6
+      { title:"Lease Violation / Incident Form", blurb:"Incident/violation report.", href:"docs/Lease_Violation_Incident_Form.docx", tag:"Protocols", category:"Protocols",
+        summary:"Complete within 24h: general info, type, narrative, threat assessment, immediate actions, support requested, history, notes, signature. Emergencies: hotline/911 first, then submit." },
+      { title:"Move-In Checklist", blurb:"Move-in kit checklist.", href:"docs/Move-In Checklist.docx", tag:"Protocols", category:"Protocols",
+        summary:"Comprehensive kit & onboarding checklist: household essentials, hygiene, clothing basics, safety/comfort, optional food starter, orientation packet, optional add-ons, and culturally responsive/adaptive options." },
+      { title:"Network Housing Developer Job Description", blurb:"Landlord outreach & pipeline.", href:"docs/Network Housing Developer Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Build/maintain reentry-friendly housing pipeline: recruit/educate landlords, inspections, lease logistics, unit readiness, documentation, ECR entries, directory upkeep, community/partner meetings. Qualifications emphasize housing/landlord engagement and fair-housing familiarity." },
+      { title:"Opportunity Notice", blurb:"Program overview & counties.", href:"docs/Opportunity Notice.docx", tag:"Overview", category:"Overview",
+        summary:"Public overview of the B2H pilot (Madison, Sangamon, St. Clair). Mission, context (reentry homelessness risk), value to landlords/agencies, and next steps (contact, LOI, readiness, onboarding)." },
+      { title:"Peer Support Specialist Job Description", blurb:"Peer role supporting recovery.", href:"docs/Peer Support Specialist Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Uses lived experience to promote engagement, recovery, and stability: relationship-building, appointments, ISP collaboration, groups, coping skills, move-in support, linkages, documentation, safety escalation; CRSS/CPRS preferred or attainable." },
 
-{
-  title: "Bridge Housing – Partner Info Sheet",
-  blurb: "Expectations, limits, check-ins, incident response for bridge partners.",
-  href: "docs/Bridge_Housing_Partner_Info_Sheet.docx",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Overview for prospective bridge-housing partners (hotels/motels, SROs, transitional providers). Explains the purpose of short-term stays during the transition to permanent housing, basic expectations (furnished, habitability standards, coordination with TASC, monthly invoicing), typical stay limits (e.g., 30–90 days), and support model (regular case-manager check-ins and a 24/7 hotline; partners aren’t expected to intervene in incidents). Covers incident response (call the hotline, use 911 for emergencies, TASC coordinates follow-up) and partnership types from private hotel rooms to specialized settings. Lists next steps to express interest and receive onboarding/invoicing materials. :contentReference[oaicite:1]{index=1}"
-},
+      // Batch 7
+      { title:"Pilot Program Staffing Model", blurb:"60-participant staffing mix.", href:"docs/Pilot Program Staffing Model.docx", tag:"Overview", category:"Overview",
+        summary:"Role mix/FTEs/salary bands sized for ~60 participants: Ops leadership, Supervisors, Case Managers, Peer Support, Housing Developers, Data Coordinator, Drivers, and evaluation support." },
+      { title:"Pre & Post Release Placement Timeline", blurb:"Milestones pre/post release.", href:"docs/Pre_Post_Release_Placement_Timeline.docx", tag:"Workflows", category:"Workflows",
+        summary:"Referral → eligibility → assignment → matching/inspection → lease/move-in → 72-hour protocol → first 30-day stabilization (linkage windows and check-ins)." },
+      { title:"Recommendations", blurb:"Program enablement recommendations.", href:"docs/Recommendations.docx", tag:"Overview", category:"Overview",
+        summary:"Enablement list: DocuSign invoicing, behavior-tracked outreach with follow-ups, email packs, funnel tracker, VO video, document portal, KPI page, rental-payment tracker, evaluation track, language access, multi-language materials." },
+      { title:"Roles and Responsibilities", blurb:"Duties by role.", href:"docs/Roles and Responsibilities.docx", tag:"Roles", category:"Roles",
+        summary:"At-a-glance matrix of Director, Administrator, Supervisor, Case Manager, Peer Support, Housing Developer, Data Coordinator, Driver, and evaluation support responsibilities." },
+      { title:"Service Provider Directory", blurb:"Service provider contacts.", href:"docs/Service_Provider.xlsx", tag:"Overview", category:"Overview",
+        summary:"Master Excel directory for referrals: agency, program type, contacts, coverage areas, eligibility notes, languages; filter by county/service/language; keep capacity/intake notes current." },
 
-{
-  title: "Bridge Housing – Referral Form",
-  blurb: "Internal request for short-term bridge housing prior to lease-up.",
-  href: "docs/Bridge_Housing_Referral_Form.docx",
-  tag: "Workflows",
-  category: "Workflows",
-  summary: "Internal form to request a bridge-housing placement. Sections include referrer info and client identifiers (name, DOB, DOC #), county of origin, current status (incarcerated with pending release vs. recently released), and permanent housing timeline (projected lease-up date/location). Documents the reason bridge housing is needed (unit not ready, inspection pending, admin delay, other) and preferences (hotel/motel, SRO, transitional partner). Captures special considerations (ADA, proximity to health care/employment). Notes expected check-in frequency, assigned case manager, and risk factors (mental-health crisis risk, SUD support, behavioral concerns). Concludes with a signed authorization affirming eligibility and accuracy. :contentReference[oaicite:2]{index=2}"
-},
+      // Batch 8 (+ new HQS checklist)
+      { title:"HQS Pre-Inspection Checklist", blurb:"Pre-HQS check before lease-up.", href:"docs/HQS_Pre_Inspection_Checklist.docx", tag:"Protocols", category:"Protocols",
+        summary:"Field checklist verifying habitability prior to formal inspection: health/safety, living/bedroom, kitchen, bathroom, utilities, exterior/common. Result: Pass / Conditional (repairs) / Fail; with signatures." },
+      { title:"Sub-Contracting Workflow", blurb:"Process to engage and manage subcontractors.", href:"docs/Sub-Contracting Workflow.docx", tag:"Workflows", category:"Workflows",
+        summary:"Identification → due diligence (MOU, licenses, scope, budget, W-9, COI) → approval (TASC/funder as needed) → onboarding (referral/data workflows, access) → oversight (check-ins, reports, invoices, compliance)." },
+      { title:"Suitability Assessment", blurb:"Readiness/level-of-care assessment.", href:"docs/Suitability_Assessment.docx", tag:"Assessments", category:"Assessments",
+        summary:"Tool with threshold screening, MH/cognition, daily living, risk/protective, substance use, and scoring that recommends ISH vs. ESH vs. higher care, with assessor notes/override." },
+      { title:"Supervisor Job Description", blurb:"Clinical supervision, team leadership, QA.", href:"docs/Supervisor Job Description.docx", tag:"Roles", category:"Roles",
+        summary:"Leads multidisciplinary team; ensures individualized, evidence-based care; oversees operations, QA, reporting, staffing, and partner relationships; master’s + IL license required; supervisory experience." },
 
-{
-  title: "Case Manager Job Description",
-  blurb: "Core duties & competencies for B2H reentry case management.",
-  href: "docs/Case Manager Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Non-exempt role within CTP/B2H providing specialized reentry case management to people returning from Illinois prisons with high housing barriers. Duties (≈75%) include intakes and housing screenings, ISP/stabilization planning, tenancy coaching, home visits, conflict mediation, referrals to BH/employment/legal aid, move-in support (utilities, start-up kits), and thorough ECR documentation. Additional responsibilities: data/outcome tracking, staff meetings/supervision, multidisciplinary staffing (≈20%), plus confidentiality, DEI stewardship, and other duties (≈5%). Competencies span planning, communication, data use, trauma-informed care, problem solving, and teamwork. Qualifications: bachelor’s preferred (SW/psych/CJ), 2+ years direct CM experience, ability to implement Housing First, MS Office proficiency, strong facilitation; CADC/CARS attainable within two years; justice-impacted applicants encouraged. Includes work environment, physical demands, hours, travel, and background check requirements. :contentReference[oaicite:3]{index=3}"
-},
-
-{
-  title: "Client Referral Workflow",
-  blurb: "From IDOC referral to lease-ready placement and stabilization.",
-  href: "docs/Client Referral Workflow.docx",
-  tag: "Workflows",
-  category: "Workflows",
-  summary: "End-to-end process beginning ~90 days pre-release: secure referral intake with screening packet (demographics, criminal history flags, MH info, release conditions), quick eligibility review, and CM assignment. In parallel, landlord engagement and unit matching proceed via a Landlord Information/LOI flow and unit documentation. Client intake includes a Supportive Housing Eligibility & Readiness Assessment to determine level of care (ISH/ESH), risks, and preferences, informing the individualized service plan. Pre-move steps: inspection using a standardized checklist, documentation upload (ISP, lease, W-9/ACH), supervisory approval, and scheduling aligned with release. Move-in day covers lease signing/orientation, unit walkthrough, transportation, and initial needs; then an intensive 72-hour support window. Post-placement, peer/community support staff provide ongoing check-ins, services linkage, and incident/lease-violation reporting, tracking stability outcomes at 6/12 months. :contentReference[oaicite:4]{index=4}"
-}
-
-{
-  title: "Data Coordinator Job Description",
-  blurb: "Performance data entry, QA, and reporting for B2H.",
-  href: "docs/Data Coordinator Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Non-exempt role within Performance & Quality Improvement for the B2H program, reporting to the Director of PQI. Primary focus: maintain accuracy/completeness of performance data, enter and reconcile data in CRM, identify discrepancies, organize/analyze trends, and deliver monthly/quarterly reports on time. Supports program ops by updating master/support documents and gathering inputs from landlords and stakeholders. Qualifications: HS/GED required, 2+ years admin + 2+ years data entry/reporting (charts), advanced MS Office/Internet. Core skills: accountability, analysis/reasoning, attention to detail, communication, teamwork, thoroughness. Includes work environment, physical demands (sedentary with occasional lifting up to 15 lbs), full-time schedule (M–F 8:30–5 with some evenings/weekends), local travel with valid driver’s license/insurance, and standard “other duties” language. :contentReference[oaicite:0]{index=0}"
-},
-
-{
-  title: "Driver Job Description",
-  blurb: "Transport clients safely between IDOC, housing, and services.",
-  href: "docs/Driver Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Non-exempt role in the Corrections Transition Program (B2H) providing transportation from IDOC facilities to housing units, to treatment and other required appointments. Core duties (~95%): safe transport, daily vehicle inspections, mileage/fuel logs, monthly inspections, cost-effective routing, liaison communication with providers, documentation completion, and adherence to safety policies; plus professional development (~5%). Competencies include planning/organizing, customer relations, problem solving, productivity/accountability, trauma-informed care, collaboration, time management. Qualifications: HS diploma/equivalent, valid IL license, 1–2 years driving/transport experience, GPS familiarity, confidentiality/boundaries, experience with justice-involved or vulnerable populations, CPR/First Aid, ability to pass background/drug screening; bilingual preferred. Lists work settings (secured/office), physical demands (frequent movement, up to 15 lbs), full-time hours (M–F 8:30–5 with possible evenings/weekends), and travel expectations. :contentReference[oaicite:1]{index=1}"
-},
-
-{
-  title: "Frequently Asked Questions",
-  blurb: "Common questions for landlords and partner agencies.",
-  href: "docs/Frequently Asked Questions.docx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Two-audience FAQ. **Landlords:** What B2H is (housing + supports + liaison), who tenants are (referred through state/community, paired with a CM), how landlords are supported (orientation, dedicated liaison, 24/7 assistance, regular check-ins), incentive overview (vacancy coverage, unit prep assistance, possible advance rent; finalized in onboarding), incident process (streamlined reporting + hotline; team responds quickly), responsibilities (provide habitable housing, normal lease enforcement, communicate with program), and how to start (watch overview, submit Letter of Intent/Interest Form, readiness call). **Agencies:** Who you serve (TASC/IDOC referrals needing housing/supports), supports (training, coordination tools, statewide partnership), incentives (no direct payments; visibility/partnership value), how to join (LOI/Interest Form → readiness calls → onboarding), expectations (collaboration, consistent reporting, network participation). :contentReference[oaicite:2]{index=2}"
-},
-
-{
-  title: "Housing Eligibility Screening and Intake & Readiness",
-  blurb: "Screening tool for eligibility and level of care (ISH vs. ESH).",
-  href: "docs/Housing Eligibility Screening and Intake & Readiness.docx",
-  tag: "Assessments",
-  category: "Assessments",
-  summary: "Structured supportive-housing screening to pair objective criteria with informed clinical judgment. Captures client info (DOC #, DOB, facility, returning county, language/cultural needs), basic eligibility (release window, B2H eligibility, voluntary participation, hospitalization status, recent violent outbursts), and clinical sections: mental-health diagnoses, psychotropic meds, medication adherence, past-year suicidal/homicidal ideation, cognitive concerns. Includes substance-use history; risk level (Low/Mod/High); wraparound needs (ICM, transport, med management, employment, peer support, insurance navigation, family reunification); and detailed **Daily Living Skills** ratings (independent/with support/significant help) across meals, hygiene, meds, safety, shared-space interactions. Documents protective factors (family/community affiliation, willingness to engage, provider engagement) and risk indicators (active psychosis, refusal to engage, cognitive decline). Final **Placement Recommendation**: Independent Supportive Housing, Enhanced Supportive Housing, or Not Recommended (refer to higher-acuity setting), with signatures for IDOC Screener and TASC Reviewer. :contentReference[oaicite:3]{index=3}"
-},
-
-{
-  title: "Housing Match Workflow",
-  blurb: "End-to-end matching steps with legal/service constraints.",
-  href: "docs/Housing Match Workflow.docx",
-  tag: "Workflows",
-  category: "Workflows",
-  summary: "Eight-step workflow: (1) Intake/Readiness confirmation (eligibility; ISH vs. ESH; special conditions like SOR/arson; queue; bridge housing if not ready). (2) Needs & restrictions (legal distance rules, municipal fire-code limits; proximity to hospitals, clinics, pharmacies; family/community ties; transportation; cultural/religious needs) with escalation if no compliant property. (3) Landlord/unit identification (county inventory; ADA; LOI signed; unit readiness; only show legally compliant units; prioritize service proximity). (4) HQS-style pre-inspection (habitability, safety, detectors, cleanliness; deficiency correction timelines). (5) Team match review using a score across legal compliance, service proximity, readiness tier, landlord willingness; tie-break toward stability. (6) Case conference (CM, landlord liaison, P&P as needed): confirm lease details, service schedule, crisis plan/24-7 hotline. (7) Lease execution & move-in (collect lease, W-9, ACH, service agreement; move-in checklist; tenant orientation; landlord incident-reporting instructions). (8) Stabilization & monitoring: ISH monthly check-ins; ESH weekly+; landlord hotline pathway; case-conferencing at 30/60/90 days. :contentReference[oaicite:4]{index=4}"
-}
-{
-  title: "Housing Provider Directory",
-  blurb: "Provider contacts and service areas.",
-  href: "docs/Housing Provider Directory.xlsx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Master spreadsheet of housing providers used for matching and outreach. Typical columns include provider/owner name, contact person, phone/email, property addresses, counties served, unit types (studio/1BR/2BR, accessible/ADA), typical rents, voucher acceptance, special program notes (reentry-friendly, rapid approvals), inspection requirements, and remarks on past collaboration. Use it to filter by county, proximity to services, accessibility needs, and landlord participation status. (Structure summary—workbook content varies by your entries.)"
-},
-
-{
-  title: "Implementation Plan",
-  blurb: "Phased plan & milestones.",
-  href: "docs/Implementation Plan.docx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Six-phase roadmap with milestones, outputs, and governance cadence. Phase 1 (Feasibility, wks 1–8): staffing model/salary bands, end-to-end flow mapping, Year-1 scope (60 participants) and ~$3M budget, pilot counties; steering sign-off. Phase 2 (Implementation Plan, wks 9–16): integrated timeline, ECR data plan, core templates (intake, ISP, hotline, AP/invoice), standardized LOI/DSA/MOU/contract packets, finalized screening/referral packets, payment SOP + DocuSign + portal roadmap, 24/7 hotline SOP; staff training plan. Phase 3 (Planning, wks 17–20): staff assignments/on-call rotation, bridge vendor onboarding with per-diem caps, landlord outreach sequence, workflow rehearsals, go-live checklist. Phase 4 (Launch, wks 21–24): begin referrals, readiness assessments, utilize bridge housing, first lease-ups, weekly unblock reviews using process KPIs. Phase 5 (Scale & Stabilize, wks 25–32): expand landlord pipeline, standardize lease-up checklist, retention cadence, monthly dashboard, fix pain points. Phase 6 (Continuous Improvement, wks 33+): quarterly partner roundtables, SLA tuning (hotline/AP), optimize bridge vendor network, deepen stabilization practices, pulse surveys, Year-2 plan. Cross-cutting cadence: weekly PMO, bi-weekly risk review, monthly Steering; ECR dashboards weekly, PQI audits, behavior-based landlord email comms. :contentReference[oaicite:0]{index=0}"
-},
-
-{
-  title: "Incident Triage Decision Tree",
-  blurb: "Safety triage and escalation.",
-  href: "docs/Incident Triage Decision Tree.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Field guide + decision tree for landlords and hotline staff. Step 1: Immediate safety—if there’s active danger (weapons, violence, suicide attempt, fire, severe damage), call 911 immediately; after safe, notify on-call CM and file incident report. Step 2: Urgency—MH crisis without imminent violence → call on-call CM (or 911 if escalating); lease violations without safety risk → document on Lease Violation/Incident Report and send to CM in 24h; substance use without threat → document and notify CM. Step 3: De-escalation tips (calm tone, short statements, ensure exit path, do not restrain). Step 4: Documentation—complete report within 24h (who/what/when/where/witnesses/actions), CM logs follow-up in ECR within 48h and notifies supervisor. Step 5: CM follow-up timelines: ISH within 48h; ESH within 24h; update ISP/case conference as needed and close the loop with landlord. Also includes hotline intake script, documentation elements, and routing expectations. :contentReference[oaicite:1]{index=1}"
-},
-
-{
-  title: "Internal Bridge Housing Protocol",
-  blurb: "Bridge housing guidance.",
-  href: "docs/Internal_Bridge_Housing_Protocol.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Comprehensive SOP for short-term bridge placements when permanent units aren’t immediately available. Covers referral prerequisites (form, reason, expected LOS, special needs), supervisor approval, vendor setup (hotels/motels, SROs, congregate, specialized units) with vendor code, agreement, W-9/ACH. Stay limits default to ≤90 days; extensions require supervisor justification. Check-in cadence varies by setting (e.g., hotels: ≥3x/week with ≥1 in-person), with notes entered within 24h. Incident response: vendors call 24/7 hotline; life-threatening → 911 + CM/supervisor; all incidents logged in ECR with follow-up plan. Invoicing: monthly template, CM verifies occupancy, finance pays within 30 days; discrepancies are resolved with vendor/CM. Transition/exit requires a plan within 30 days (target permanent option, supports), final inspection, and ECR closure. Roles defined for CM, Supervisor, Finance, Vendor, and Hotline staff. :contentReference[oaicite:2]{index=2}"
-},
-
-{
-  title: "KPIs with Recommend Tracking",
-  blurb: "KPIs for placement, services, stability.",
-  href: "docs/KPIs_with_Recommend Tracking.docx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Catalog of current and recommended KPIs plus how to track them. Existing: Timely Placement; ISP completion within 45 days; linkage to BH/medical within 7 days; life-skills initiation in 14 days; 72-Hour engagement protocol; CM touchpoints cadence; tenant retention at 6/12 months; landlord engagement rate; incident response time. Recommended: referral-to-placement time; language access (% Spanish-speaking served by bilingual staff); client satisfaction; ISP milestone achievement; benefits enrollment; employment/job-readiness linkage; landlord retention and unit re-utilization; legal compliance; agency coordination score. Enhanced KPI sets for pre-release, move-in/housing, post-release service delivery, and stability/outcome reporting—with suggested data sources (ECR logs, provider confirms, surveys, audits) and threshold targets. :contentReference[oaicite:3]{index=3}"
-}
-{
-  title: "Landlord Flyer",
-  blurb: "Why partner, supports, and how to get started.",
-  href: "docs/Landlord Flyer.pdf",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "One-page invitation for property owners to partner with B2H. Explains the program (stable housing + supportive services), the value to landlords (robust referral pipeline, coordination with agencies and case managers), and support provided (orientation, case conferencing, readiness assistance). Lists next steps—email/call, submit the Letter of Intent (Interest Form), and attend orientation—with a QR code to the Interest Form and central contact details for quick onboarding. :contentReference[oaicite:0]{index=0}"
-},
-
-{
-  title: "Landlord Overview Deck",
-  blurb: "Slide deck: program, supports, incentives, FAQs.",
-  href: "docs/Landlord Overview Deck.pdf",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Presentation for prospective/active landlords. Covers the B2H mission, how placements work, and wraparound supports (dedicated case managers, 24/7 hotline, streamlined onboarding). Highlights participation benefits (reliable rent, potential incentives, coordinated communications), tenant supports (intake, ISP, regular check-ins), and partnership process (inspection → lease signing → ongoing liaison). Includes FAQs on tenants, supports, incentives (e.g., vacancy coverage, unit prep help, possible advance rent), incident handling, responsibilities, and how to start (LOI/Interest Form, readiness call). :contentReference[oaicite:1]{index=1}"
-},
-
-{
-  title: "Landlord Incentive Proposal",
-  blurb: "Proposed menu to recruit and retain landlords.",
-  href: "docs/Landlord_Incentive_Proposal.docx",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Proposal for an expanded incentive program to build a pipeline of second-chance landlords for high-barrier tenants. Details incentive types with example amounts and verification: signing bonus (e.g., ~⅓ market rent), risk-mitigation fund (e.g., up to $750), holding fees (e.g., ½ market rent up to 30 days), repair/readiness stipends (e.g., up to $500), annual retention bonus (e.g., ~⅓ market rent), and expedited case-management support. Adds optional advance-rent models (quarterly or semi-annual with safeguards). Outlines landlord eligibility (inspection, orientation, agreements, W-9), administration (TASC + fiscal partners), and rationale drawn from reentry housing best practices. :contentReference[oaicite:2]{index=2}"
-},
-
-{
-  title: "Landlord Invoice and Process",
-  blurb: "Monthly invoice template and end-to-end payment workflow.",
-  href: "docs/Landlord_Invoice_and_Process.docx",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Standardized monthly invoice package + clear payment flow. Template captures landlord/vendor code, contact info, tenant name(s), unit, market rent, total, and certifications. Process: Finance assigns vendor code → Finance pre-generates monthly invoice (pre-filled) → IT sends submission reminders → landlord signs/returns to Case Manager → CM verifies occupancy, ensures all partners submitted, forwards to Finance → Finance cross-checks and issues ACH/check. Includes signature lines for landlord and CM and emphasizes documented verification before payment. :contentReference[oaicite:3]{index=3}"
-},
-
-{
-  title: "Landlord Orientation Packet",
-  blurb: "Complete onboarding packet: program, incentives, HQS, forms, contacts.",
-  href: "docs/Landlord_Orientation_Packet.docx",
-  tag: "Partnerships",
-  category: "Partnerships",
-  summary: "Comprehensive onboarding guide for housing providers. Introduces TASC + B2H, population served (reentry, SMI, arson/SOR, veterans/older adults), and the support model (assigned case manager + 24/7 hotline). Explains how to request assistance and document incidents. Details incentive options (lease-up bonus, risk-mitigation, unit hold payments, advance-rent schedules) and how to claim them (forms + documentation, W-9/ACH, secure submission). Payment timing (e.g., within ~15 business days when complete). Compliance: HQS pre-inspection, maintenance/health-safety response times. Packet includes recommended resources/forms: lease template, HQS checklist, incentive claim, issue log, W-9, ACH setup, sign-off sheet. :contentReference[oaicite:4]{index=4}"
-}
-
-{
-  title: "Lease Violation / Incident Form",
-  blurb: "Incident/violation report.",
-  href: "docs/Lease_Violation_Incident_Form.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Standard report landlords complete within 24 hours of a lease violation or incident. Sections: General info (landlord, address, tenant, unit, date/time); Type (lease violation, MH incident, SUD incident, police involvement, other); Narrative description (context, behaviors, actions taken); Threat assessment (to self/others/none, with explanation); Immediate actions (emergency contacts, supports engaged); Support requested from TASC (on-site crisis response, CM follow-up, MH referral, temporary relocation, hotline callback, other); Prior history; Additional notes; and signature block with contact info/date. For emergencies, it instructs to call the 24-hour hotline/911 first, then submit the form. :contentReference[oaicite:0]{index=0}"
-},
-
-{
-  title: "Move-In Checklist",
-  blurb: "Move-in kit checklist.",
-  href: "docs/Move-In Checklist.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Comprehensive tenant move-in kit and onboarding checklist to support dignity and early stabilization. Categories: (1) Essential household items (bedding, bath supplies, kitchenware, cleaning supplies); (2) Personal hygiene kit (toiletries incl. gender-affirming options); (3) Clothing essentials; (4) Safety/comfort (flashlight, first-aid, emergency contact card with CM + 24/7 hotline, detectors, planner/board); (5) Optional food starter pack; (6) Program orientation packet (welcome letter, rights/responsibilities, signed lease copy, CM contacts, program expectations, emergency numbers, local resource guide); (7) Optional add-ons (charger/phone, transit card, alarm clock, storage bin, med organizer); (8) Special considerations (culturally responsive products, low-literacy supports, adaptive tools, LGBTQ+-inclusive options). :contentReference[oaicite:1]{index=1}"
-},
-
-{
-  title: "Network Housing Developer Job Description",
-  blurb: "Landlord outreach & pipeline.",
-  href: "docs/Network Housing Developer Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Exempt role (CTP/B2H; created Jun 2025, updated Sept 2025) that builds and maintains a pipeline of reentry-friendly housing across IL (e.g., St. Clair, Madison, Sangamon). Duties: recruit/educate landlords; complete pre-move-in readiness inspections; quarterly property inspections; troubleshoot lease/client issues and document incidents; process rental applications; compute rents; coordinate keys/move-ins; answer landlord inquiries; recommend termination when appropriate; conduct logs/reports; document all engagement in ECR; maintain an affordable housing directory; participate in multidisciplinary staffing and community meetings. Competencies include planning, communication, data use, problem-solving, accountability, relationship building, trauma-informed care, and time management. Qualifications: bachelor’s (SW/Urban Planning/Real Estate/Human Services or equivalent exp.), 2+ yrs housing/landlord engagement or related experience, fair-housing/HUD familiarity, strong negotiation and conflict resolution, valid driver’s license/insurance, and willingness to work across secured/community settings. Justice-impacted and bilingual candidates welcomed. :contentReference[oaicite:2]{index=2}"
-},
-
-{
-  title: "Opportunity Notice",
-  blurb: "Program overview & counties.",
-  href: "docs/Opportunity Notice.docx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Public overview of the B.R.I.D.G.E. To Home pilot (Madison, Sangamon, St. Clair counties; lead: TASC; target go-live: Jan 1, 2026). Summarizes mission (supportive housing + wraparound services + incentives for justice-impacted individuals facing high homelessness risk), context (tens of thousands exit corrections into shelters nationwide), and B2H’s value proposition (remove reentry housing barriers and reduce the ‘revolving door’). Benefits: Landlords—guaranteed rent, incentives, dedicated CMs, 24/7 hotline, streamlined partnership; Agencies—clear referral process, ongoing collaboration/case conferences, access to network resources. Next steps: contact B2H (email/phone), submit Letter of Intent (QR), join readiness/onboarding calls, begin referrals. :contentReference[oaicite:3]{index=3}"
-},
-
-{
-  title: "Peer Support Specialist Job Description",
-  blurb: "Peer role supporting recovery.",
-  href: "docs/Peer Support Specialist Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Role centered on using lived experience to promote engagement, recovery, and housing stability for justice-impacted tenants. Typical duties: build trusting relationships; accompany clients to appointments; co-create/review ISPs with case managers; facilitate or co-facilitate peer groups; model harm-reduction and coping skills; assist with move-in orientation and early routines; support linkage to MH/SUD care, benefits, employment, and pro-social community; track goals and document contacts in ECR; escalate safety concerns per hotline/SOPs; maintain professional boundaries and confidentiality. Qualifications often include lived experience in recovery/reentry, strong communication, trauma-informed practice, ability to work in community settings and as part of a multidisciplinary team; CRSS/CPRS (or similar peer credential) preferred or attained within a specified timeframe."
-}
-
-{
-  title: "Pilot Program Staffing Model",
-  blurb: "60-participant staffing mix.",
-  href: "docs/Pilot Program Staffing Model.docx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Staffing plan sized for ~60 participants with role mix, FTEs, and salary bands. Core team: Director of Operations (0.65 FTE; external partnerships/oversight), Administrator (1.0 FTE; daily ops and supervision), Supervisors (2.0 FTE; clinical/QA; team leadership), Case Managers (5.0 FTE; ~20 caseload each; intake→ISP→home visits), Peer Support Specialists (2.0 FTE; engagement/recovery), Network Housing Developers (2.0 FTE; landlord pipeline, inspections, lease logistics), Data Coordinator (0.25 FTE; reporting/QA), Drivers (2.0 FTE; secure transport), plus an Evaluator Consultant. Includes position summaries and approximate salaries derived from Sept 2025 JDs and plan figures. :contentReference[oaicite:0]{index=0}"
-},
-
-{
-  title: "Pre & Post Release Placement Timeline",
-  blurb: "Milestones pre/post release.",
-  href: "docs/Pre_Post_Release_Placement_Timeline.docx",
-  tag: "Workflows",
-  category: "Workflows",
-  summary: "Milestone timeline from referral to the first 30 days after move-in. Day 0–2: referral logged, eligibility/PRB orders/ROI verified. Day 2–5: initial contact; CM assigned; intake scheduled. Day 5–12: housing search/matching begins (geography/restrictions); inspections scheduled. Day 10–14: intake completed; case plan drafted (BH/SUD/benefits/employment). Day 14–21: unit approved; lease initiated; move-in kit ready; landlord onboarding; date aligned with release/MSR. Day 21–30 (or release day): transport from facility; lease signing; walkthrough; 72-hour support protocol. Post move-in days 1–30: life-skills within 14 days; health/BH linkage within 7 days; weekly CM check-ins; monitor adjustment; crisis support as needed. :contentReference[oaicite:1]{index=1}"
-},
-
-{
-  title: "Recommendations",
-  blurb: "Program enablement recommendations.",
-  href: "docs/Recommendations.docx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Actionable enablement package: (1) DocuSign-based invoicing as standard; email/PDF fallback; portal in Phase 2. (2) Behavior-tracked outreach emails with 3 follow-up tracks (unopened, opened/no-click, clicked/no-completion). (3) Reusable email template pack (E1–E5). (4) Single campaign tracker mirroring funnel (delivered→opened→clicked→completed). (5) Short voice-over video using overview decks. (6) Central document portal (public read-only; secure upload). (7) Publish the KPI list and keep pinned. (8) Lightweight rental-payment tracker tied to invoices. (9) Pilot evaluation track with client/landlord/agency feedback. (10) Language access—bilingual hotline/front-line coverage. (11) Multi-language materials (Spanish first). Each item lists rationale and success signals (e.g., on-time payments ↑, exceptions ↓). :contentReference[oaicite:2]{index=2}"
-},
-
-{
-  title: "Roles and Responsibilities",
-  blurb: "Duties by role.",
-  href: "docs/Roles and Responsibilities.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "At-a-glance matrix of program roles. Director of Operations: operational effectiveness, compliance, budget, external partners. Administrator: daily clinical program management, staff supervision, QA, reporting. Supervisor: clinical supervision, performance, training, productivity for CMs/PSS/NHDs. Case Manager: intake/screening, ISP/stabilization, crisis intervention, home visits, referrals, documentation. Peer Support Specialist: lived-experience engagement, life-skills coaching, transport support, community linkage, documentation. Network Housing Developer: landlord recruitment/education, inspections, lease logistics, property directory, ECR documentation. Data Coordinator: CRM entry, QA audits, performance reports, document maintenance. Driver: reliable client transport, vehicle safety/logs, boundary maintenance. Evaluator Consultant: TBD. :contentReference[oaicite:3]{index=3}"
-},
-
-{
-  title: "Service Provider Directory",
-  blurb: "Service provider contacts.",
-  href: "docs/Service_Provider.xlsx",
-  tag: "Overview",
-  category: "Overview",
-  summary: "Master Excel directory of service providers used for referrals and coordination. Typical fields include agency name, program type (MH/SUD/medical/employment/legal), contact person, phone/email, address/coverage areas, eligibility notes, languages served, and referral instructions. Use filters to locate providers by county, service type, and language; keep notes current on capacity, intake hours, and specializations. (Structure summary—workbook content depends on your entries.)"
-}
-
-{
-  title: "HQS Pre-Inspection Checklist",
-  blurb: "Pre-HQS check before lease-up.",
-  href: "docs/HQS_Pre_Inspection_Checklist.docx",
-  tag: "Protocols",
-  category: "Protocols",
-  summary: "Field checklist to confirm habitability before formal inspection. Sections cover: General Health & Safety (no immediate hazards, working smoke/CO detectors, no infestation, doors/windows secure), Living/Bedrooms (ventilation window, intact glazing, outlets covered, no water damage/major cracks), Kitchen (working stove/oven & fridge, hot/cold water, no leaks/mold), Bathroom (toilet/sink/tub functional, drainage, ventilation, no visible mold), Heating/Cooling & Utilities (safe heat, hot water, utilities on, accessible breaker panel), and Exterior/Common Areas (sound roof/exterior, safe stairs/rails, lighting, no trash hazards). Final determination: Pass, Conditional (repairs before lease-up), or Fail. Signature/date lines included. :contentReference[oaicite:0]{index=0}"
-},
-
-// REPLACE existing:
-{
-  title: "Sub-Contracting Workflow",
-  blurb: "Process to engage and manage subcontractors.",
-  href: "docs/Sub-Contracting Workflow.docx",
-  tag: "Workflows",
-  category: "Workflows",
-  summary: "End-to-end process for bringing on partner agencies. 1) Identification & Selection: confirm the service gap and shortlist capable providers; collect Letter of Intent (interest form). 2) Due Diligence & Documentation: gather MOU/LOI, licenses/credentials, scope of work, staff résumés, detailed budget, and admin docs (W-9, COI) using a standardized checklist. 3) Approval: TASC management and funder (e.g., ICJIA/IDOC) review scope/budget; high-dollar subs require funder sign-off; execute a formal subcontract with deliverables, reporting, and payment terms. 4) Onboarding & Integration: orientation to referral/data workflows; role-based access to ECR if applicable; expectations for reporting. 5) Ongoing Oversight: supervisor/administrator sets check-ins and monitors reports, invoices, and compliance; performance issues are addressed through established escalation. :contentReference[oaicite:1]{index=1}"
-},
-
-// REPLACE existing:
-{
-  title: "Suitability Assessment",
-  blurb: "Readiness/level-of-care assessment.",
-  href: "docs/Suitability_Assessment.docx",
-  tag: "Assessments",
-  category: "Assessments",
-  summary: "Structured tool with a built-in scale to guide placement in ISH vs. ESH (or higher care). Sections: Initial Screening (must all be “Yes”: within 90 days of release or released <6 months; willing to engage; not in civil commitment/inpatient; no violent outbursts in last 60 days). Mental Health & Cognitive Functioning (med adherence, symptom stability, cognition, suicidality; averaged score). Daily Living Skills (meals, hygiene, med mgmt, safety, interpersonal; averaged). Risk & Protective Factors (family/community support, service engagement, recent aggression, arson/SOR history & treatment engagement, prior housing stability; averaged). Substance Use (status, impact on functioning, stage of change/treatment engagement; averaged). Final Calculation averages the 4 section scores and recommends: ISH (≤1.5), ESH (1.6–2.3), or Higher Level of Care (≥2.4). Includes assessor notes and override with signature/date. :contentReference[oaicite:2]{index=2}"
-},
-
-// REPLACE existing:
-{
-  title: "Supervisor Job Description",
-  blurb: "Clinical supervision, team leadership, QA.",
-  href: "docs/Supervisor Job Description.docx",
-  tag: "Roles",
-  category: "Roles",
-  summary: "Exempt B2H Supervisor (CTP) reporting to the Administrator; effective June 2025, updated Sept 2025. Mission context: B2H provides permanent supportive housing with low-barrier placement principles. The Supervisor ensures individualized, evidence-based care across a large region and leads a multidisciplinary team (Case Managers, Peer Support Specialists, Network Housing Developer). Duties: (≈50%) daily operations & clinical oversight; caseload monitoring; file reviews; enrollment/exits; stabilization plans; reporting; confidentiality; landlord/provider liaison; required trainings. (≈35%) Staff development: supervision, evaluations, training, scheduling, HR collaboration, certification support. (≈10%) Community partner/resource work. (≈5%) Committees/coverage/other duties. Competencies: planning, risk mgmt, leadership, data use, coaching, customer relations, problem solving, productivity, communication, attention to detail, change leadership, relationship building, trauma-informed care. Qualifications: Master’s in SW/Psych or related + IL license (LSW/LCSW or LPC/LCPC) required; 2+ yrs supervisory exp; partnership skills with landlords/providers/P&P; crisis/conflict skills; data/reporting ability; IDOC access; valid driver’s license/insurance; background checks. Work environment/physical demands/schedule/travel described. Justice-impacted applicants welcomed. :contentReference[oaicite:3]{index=3}"
-}
+      // Not yet in a batch (from your list)
+      { title:"Stabilization and Ongoing Supports SOP", blurb:"Post-move-in cadence & escalation.", href:"docs/Stabilization and Ongoing Supports SOP.docx", tag:"Protocols", category:"Protocols",
+        summary:"Ongoing supports after placement: visit cadence (ISH vs. ESH), case conferencing, ISP updates, documentation within set timelines, and escalation ladder (ISH/ESH) through hotline and supervisory review." }
     ];
 
-    // ---------- AUTO SUMMARY ----------
-    function autoSummary(d){
-      const t = (d.title||"").toLowerCase();
-      const has = k => t.includes(k);
-      const bits = [];
-      const audience = [];
-      if (has("job description")) bits.push("Key responsibilities, qualifications, and competencies.");
-      if (has("workflow")) bits.push("Step-by-step process with inputs/outputs and handoffs.");
-      if (has("protocol") || has("sop")) bits.push("Standard operating procedures and escalation paths.");
-      if (has("assessment")) bits.push("Screening criteria and scoring guidance.");
-      if (has("form")) bits.push("Required fields and submission instructions.");
-      if (has("checklist")) bits.push("Required items and confirmations.");
-      if (has("timeline")) bits.push("Milestones and target dates.");
-      if (has("proposal")) bits.push("Incentives, eligibility, and terms.");
-      if (has("flyer") || has("deck")) bits.push("Outreach overview and how to engage.");
-      if (has("directory")) bits.push("Reference list with contacts and service areas.");
-      if (has("invoice")) bits.push("Billing steps and payment cycles.");
-      if (has("orientation")) bits.push("Onboarding expectations and resources.");
-      if (has("decision tree")) bits.push("Branching guidance for triage and next actions.");
-      if (has("landlord")) audience.push("landlords");
-      if (has("bridge housing")) audience.push("bridge housing partners");
-      if (has("client") || has("participant")) audience.push("participants/clients");
-      if (has("case manager")) audience.push("case managers");
-      if (has("peer support")) audience.push("peer support specialists");
-      if (has("network housing developer")) audience.push("NHDs");
-      if (has("data coordinator")) audience.push("data coordinators");
-      if (has("administrator")) audience.push("administrators");
-      if (has("supervisor")) audience.push("supervisors");
-      if (has("driver")) audience.push("drivers");
-      const base = (d.blurb || `Overview of ${d.title}.`).trim();
-      const tail = `${audience.length ? ` Intended for ${audience.join(", ")}.` : ""} ${bits.join(" ")}`.trim();
-      return `${base}${tail ? " " + tail : ""}`;
+    // -------------------------
+    // UI Helpers
+    // -------------------------
+    const categories = [
+      { name: "All Documents" },
+      { name: "Assessments" },
+      { name: "Overview" },
+      { name: "Partnerships" },
+      { name: "Protocols" },
+      { name: "Roles" },
+      { name: "Workflows" },
+    ];
+
+    function iconFor(href){
+      const n = href.toLowerCase();
+      if (n.endsWith(".pdf")) return "pdf";
+      if (n.endsWith(".xlsx") || n.endsWith(".xls")) return "xlsx";
+      if (n.endsWith(".docx") || n.endsWith(".doc")) return "docx";
+      return "generic";
     }
 
-    // ---------- STATE/UI ----------
-    let state = { q:"", category:"All Documents" };
-    const categories = [
-      { name:"All Documents" }, { name:"Assessments" }, { name:"Overview" },
-      { name:"Partnerships" }, { name:"Protocols" }, { name:"Roles" }, { name:"Workflows" },
-    ];
+    function iconClass(kind){
+      return kind === "pdf" ? "ico-pdf" :
+             kind === "xlsx" ? "ico-xlsx" :
+             kind === "docx" ? "ico-docx" : "ico-generic";
+    }
+
+    function pill(label){
+      return `<span class="badge inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-slate-700">${label}</span>`;
+    }
 
     function countByCategory(){
       const counts = Object.create(null);
@@ -513,99 +296,151 @@
       return counts;
     }
 
-    const pill = (label) =>
-      `<span class="badge inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-slate-700">${label}</span>`;
+    // -------------------------
+    // State
+    // -------------------------
+    let state = { q:"", category:"All Documents", sort:"relevance" };
 
+    // -------------------------
+    // Render filters
+    // -------------------------
     function renderFilters(){
-      const holder = document.getElementById('filters');
+      const holder = document.getElementById("filters");
       const counts = countByCategory();
       holder.innerHTML = categories.map(cat => {
         const active = state.category === cat.name;
-        return `<button data-cat="${cat.name}" class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm ${active? 'bg-slate-900 text-white':'hover:bg-slate-100'}">
+        return `<button data-cat="${cat.name}" class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm ${active ? 'bg-slate-900 text-white':'hover:bg-slate-100'}">
           <span>${cat.name}</span>
           <span class="text-xs opacity-70">${counts[cat.name]||0}</span>
         </button>`;
-      }).join('');
-      holder.querySelectorAll('button').forEach(btn => btn.addEventListener('click', e => {
-        state.category = e.currentTarget.dataset.cat;
-        renderFilters(); renderCards();
-      }));
-    }
+      }).join("");
 
-    function openDrawer(d){
-      document.getElementById('drawerTitle').textContent = d.title;
-      document.getElementById('drawerBlurb').textContent = (d.summary || autoSummary(d));
-      const fileName = d.href.split('/').pop();
-      document.getElementById('drawerView').setAttribute('href', encodeURI(d.href));
-      const dl = document.getElementById('drawerDownload');
-      dl.setAttribute('href', encodeURI(d.href));
-      dl.setAttribute('download', fileName);
-      document.getElementById('drawer').style.transform = 'translateX(0)';
-      document.getElementById('drawerBackdrop').classList.remove('hidden');
-    }
-    function closeDrawer(){
-      document.getElementById('drawer').style.transform = 'translateX(100%)';
-      document.getElementById('drawerBackdrop').classList.add('hidden');
-    }
-
-    function renderCards(){
-      const grid = document.getElementById('cardsGrid');
-      const q = state.q.toLowerCase();
-      const filtered = DOCS.filter(d => {
-        const inCat = state.category === 'All Documents' || d.category === state.category;
-        const hay = (d.title + " " + d.blurb + " " + (d.summary || autoSummary(d))).toLowerCase();
-        const inSearch = !q || hay.includes(q);
-        return inCat && inSearch;
+      holder.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", e => {
+          state.category = e.currentTarget.dataset.cat;
+          renderFilters(); renderCards();
+        });
       });
-
-      grid.innerHTML = filtered.map((d,i) => {
-        const fileName = d.href.split('/').pop();
-        return `
-        <div class="card rounded-2xl border border-slate-200 p-5 transition shadow-sm bg-white cursor-pointer" data-idx="${i}">
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <div class="h-10 w-10 grid place-items-center rounded-xl bg-rose-50 text-rose-600 border border-rose-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5"/></svg>
-              </div>
-              <div>
-                <div class="font-semibold leading-snug hover:underline">${d.title}</div>
-                <div class="mt-1">${pill(d.tag)}</div>
-              </div>
-            </div>
-            <a href="${encodeURI(d.href)}" download="${fileName}" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium" title="Download" onclick="event.stopPropagation()">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
-              Download
-            </a>
-          </div>
-          <p class="mt-3 text-sm text-slate-600 truncate-2">${d.blurb}</p>
-        </div>`;
-      }).join('');
-
-      grid.querySelectorAll('.card').forEach((el, idx) => {
-        el.addEventListener('click', () => openDrawer(filtered[idx]));
-      });
-
-      document.getElementById('docCount').textContent = DOCS.length;
     }
 
-    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
-    document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
-    document.getElementById('searchInput').addEventListener('input', (e)=>{ state.q = e.target.value; renderCards(); });
-
-    // Optional: load richer summaries from /summaries/<exact file name>.txt
+    // -------------------------
+    // Summaries: allow external overrides from /summaries/<filename>.txt
+    // -------------------------
     async function loadExternalSummaries(){
       await Promise.all(DOCS.map(async d => {
         try {
-          const name = d.href.split('/').pop();
-          const res = await fetch(encodeURI('summaries/' + name + '.txt'));
+          const name = d.href.split("/").pop();
+          const res = await fetch(encodeURI("summaries/" + name + ".txt"));
           if (res.ok) d.summary = await res.text();
         } catch(_) {}
       }));
     }
 
-    // init
-    renderFilters();
-    (async ()=>{ await loadExternalSummaries(); renderCards(); })();
+    // -------------------------
+    // Search & Sort helpers
+    // -------------------------
+    function haystack(d){
+      return (d.title + " " + (d.blurb||"") + " " + (d.summary||"")).toLowerCase();
+    }
+
+    function sortDocs(arr){
+      const s = state.sort;
+      if (s === "az") return [...arr].sort((a,b)=>a.title.localeCompare(b.title));
+      if (s === "za") return [...arr].sort((a,b)=>b.title.localeCompare(a.title));
+      if (s === "category") return [...arr].sort((a,b)=> (a.category.localeCompare(b.category)) || a.title.localeCompare(b.title));
+      // relevance = keep filtered order (we don't compute score here)
+      return arr;
+    }
+
+    // -------------------------
+    // Drawer
+    // -------------------------
+    function openDrawer(d){
+      document.getElementById("drawerTitle").textContent = d.title;
+      document.getElementById("drawerBlurb").textContent = (d.summary || d.blurb || "");
+      const fn = d.href.split("/").pop();
+      const view = document.getElementById("drawerView");
+      const down = document.getElementById("drawerDownload");
+      view.setAttribute("href", encodeURI(d.href));
+      down.setAttribute("href", encodeURI(d.href));
+      down.setAttribute("download", fn);
+      document.getElementById("drawer").classList.add("drawer-open");
+      document.getElementById("drawerBackdrop").classList.remove("hidden");
+    }
+    function closeDrawer(){
+      document.getElementById("drawer").classList.remove("drawer-open");
+      document.getElementById("drawerBackdrop").classList.add("hidden");
+    }
+    document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+    document.getElementById("drawerBackdrop").addEventListener("click", closeDrawer);
+
+    // -------------------------
+    // Cards
+    // -------------------------
+    function renderCards(){
+      const grid = document.getElementById("cardsGrid");
+      const q = state.q.toLowerCase();
+
+      const filtered = DOCS.filter(d => {
+        const inCat = state.category === "All Documents" || d.category === state.category;
+        const inSearch = !q || haystack(d).includes(q);
+        return inCat && inSearch;
+      });
+
+      const sorted = sortDocs(filtered);
+
+      grid.innerHTML = sorted.map((d, i) => {
+        const fn = d.href.split("/").pop();
+        const kind = iconFor(d.href);
+        return `
+        <div class="card rounded-2xl border border-slate-200 p-5 bg-white cursor-pointer" data-idx="${i}">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="file-ico ${iconClass(kind)}">
+                ${
+                  kind==="pdf" ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5"/></svg>' :
+                  kind==="xlsx" ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8v8M8 8v8M4 12h16"/></svg>' :
+                  kind==="docx" ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>' :
+                  '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>'
+                }
+              </div>
+              <div>
+                <div class="font-semibold leading-snug hover:underline">${d.title}</div>
+                <div class="mt-1">${pill(d.tag)} <span class="ml-2 text-xs text-slate-500">${d.category}</span></div>
+              </div>
+            </div>
+            <a href="${encodeURI(d.href)}" download="${fn}" class="shrink-0 btn btn-primary" title="Download" onclick="event.stopPropagation()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
+              Download
+            </a>
+          </div>
+          <p class="mt-3 text-sm text-slate-600 truncate-3">${d.blurb}</p>
+        </div>`;
+      }).join("");
+
+      // attach handlers
+      grid.querySelectorAll(".card").forEach((el, idx) => {
+        el.addEventListener("click", () => openDrawer(sorted[idx]));
+      });
+
+      // counts
+      document.getElementById("docCount").textContent = DOCS.length;
+    }
+
+    // -------------------------
+    // Events
+    // -------------------------
+    document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
+    document.getElementById("sortSel").addEventListener("change", (e)=>{ state.sort = e.target.value; renderCards(); });
+
+    // -------------------------
+    // Init
+    // -------------------------
+    (async function init(){
+      renderFilters();
+      await loadExternalSummaries(); // uses any /summaries/*.txt overrides
+      renderCards();
+    })();
   </script>
 </body>
 </html>

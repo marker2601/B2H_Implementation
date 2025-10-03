@@ -73,62 +73,77 @@
         <div id="cardsGrid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
       </section>
     </div>
-  </main>
-
-  <footer class="border-t py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-      <div class="text-xs text-slate-500">© TASC – Treatment Alternatives for Safe Communities</div>
-      <a href="#" class="text-xs text-slate-500 hover:text-slate-700">Theme</a>
+    <!-- Details Drawer -->
+  <aside id="drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 z-50">
+    <div class="h-full flex flex-col">
+      <div class="flex items-center justify-between px-5 py-4 border-b">
+        <h3 id="drawerTitle" class="text-lg font-semibold">Document</h3>
+        <button id="drawerClose" class="rounded-lg px-2 py-1 hover:bg-slate-100" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-4 overflow-y-auto">
+        <p id="drawerBlurb" class="text-sm text-slate-700"></p>
+        <div class="flex items-center gap-3">
+          <a id="drawerView" href="#" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            View
+          </a>
+          <a id="drawerDownload" href="#" class="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 px-3 py-1.5 text-xs font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
+            Download
+          </a>
+        </div>
+      </div>
     </div>
-  </footer>
+  </aside>
 
-  <script>
+  <div id="drawerBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40 hidden"></div>
+
+</main>
+
+<script>
     // ======= DOCUMENT DATA =======
     // Upload files to /docs/ and ensure names match the hrefs below.
-    const DOCS = [
-      // --- Core set ---
-      { title: "TASC Referral Workflow", blurb: "Internal TASC referral process for connecting clients to B2H housing and services.", href: "docs/TASC_Referral_Workflow.pdf", tag: "Workflows", category: "Workflows" },
-      { title: "Suitability Assessment (Original)", blurb: "Original readiness assessment tool for housing evaluation.", href: "docs/Suitability_Assessment.pdf", tag: "Assessments", category: "Assessments" },
-      { title: "Document Index & Overview", blurb: "Index of all B2H Implementation Plan documents with quick descriptions and links.", href: "docs/Document_Index_Overview.pdf", tag: "Overview", category: "Overview" },
-      { title: "Opportunity Notice", blurb: "Program overview for landlords and agencies – counties served, benefits, and onboarding steps.", href: "docs/Opportunity_Notice.pdf", tag: "Overview", category: "Overview" },
-      { title: "Frequently Asked Questions", blurb: "Common questions and answers for landlords and agency partners about B2H.", href: "docs/FAQ.pdf", tag: "Overview", category: "Overview" },
-      { title: "Client Referral Workflow", blurb: "End-to-end referral process from IDOC through housing placement and stabilization.", href: "docs/Client_Referral_Workflow.pdf", tag: "Workflows", category: "Workflows" },
-      { title: "Housing Eligibility Screening & Intake", blurb: "Comprehensive screening tool for housing needs and clinical coordination level.", href: "docs/Housing_Eligibility_Screening_Intake.pdf", tag: "Assessments", category: "Assessments" },
-      { title: "Housing Match Workflow", blurb: "Step-by-step housing match process including legal restrictions and service proximity.", href: "docs/Housing_Match_Workflow.pdf", tag: "Workflows", category: "Workflows" },
-      { title: "Sub-Contracting Workflow", blurb: "Process to engage and manage subcontracting partners from due diligence to oversight.", href: "docs/Sub_Contracting_Workflow.pdf", tag: "Workflows", category: "Workflows" },
-      { title: "Internal Bridge Housing Protocol", blurb: "Guidance for bridge housing placements, vendor setup, incident response, and exits.", href: "docs/Internal_Bridge_Housing_Protocol.pdf", tag: "Protocols", category: "Protocols" },
-      { title: "Implementation Plan", blurb: "Phase-by-phase plan: feasibility through continuous improvement with milestones and outputs.", href: "docs/Implementation_Plan.pdf", tag: "Overview", category: "Overview" },
-      { title: "Roles & Responsibilities", blurb: "At-a-glance duties for Director, Administrator, Supervisor, Case Manager, PSS, NHD, etc.", href: "docs/Roles_and_Responsibilities.pdf", tag: "Roles", category: "Roles" },
-      { title: "Case Manager – Job Description", blurb: "Core duties, competencies, and qualifications for the Case Manager role.", href: "docs/Case_Manager_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Peer Support Specialist – Job Description", blurb: "Lived-experience peer role supporting recovery, engagement, and stabilization.", href: "docs/Peer_Support_Specialist_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Network Housing Developer – Job Description", blurb: "Landlord outreach, inspections, unit pipeline building, and tenancy support.", href: "docs/Network_Housing_Developer_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Supervisor – Job Description", blurb: "Clinical supervision, team leadership, QA, and stakeholder coordination.", href: "docs/Supervisor_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Administrator – Job Description", blurb: "Program operations, compliance, reporting, and staff leadership.", href: "docs/Administrator_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Data Coordinator – Job Description", blurb: "Performance data entry, QA, reporting schedules, and trends analysis.", href: "docs/Data_Coordinator_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Driver – Job Description", blurb: "Client transport, safety, logs, and vehicle maintenance for B2H.", href: "docs/Driver_Job_Description.pdf", tag: "Roles", category: "Roles" },
-      { title: "Move‑In Checklist", blurb: "Tenant kit checklist to support safe, dignified, stable first days in housing.", href: "docs/Move_In_Checklist.pdf", tag: "Protocols", category: "Protocols" },
-
-      // --- Added batch (10) ---
+    $1
       { title: "24/7 Hotline SOP (Landlords & Participants)", blurb: "Always-available contact pathway; triage, escalation, documentation, follow-up standards for safety and continuity.", href: "docs/24x7_Hotline_SOP.docx", tag: "Protocols", category: "Protocols" },
-      { title: "72-Hour Move-In Protocol", blurb: "Day-by-day orientation for tenant, landlord, and joint meeting; move-in kit; stabilization requirements.", href: "docs/72_Hour_Move_In_protocol.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Agency Flyer", blurb: "One-page outreach: partner benefits, next steps, and contact info for agencies joining B2H.", href: "docs/Agency_Flyer.pdf", tag: "Overview", category: "Partnerships" },
-      { title: "Bridge Housing – Partner Info Sheet", blurb: "Expectations, stay limits, check-ins, incident response, and partnership types for bridge housing vendors.", href: "docs/Bridge_Housing_Partner_Info_Sheet.docx", tag: "Overview", category: "Partnerships" },
+      { title: "72 Hour Move In protocol", blurb: "Day-by-day orientation for tenant, landlord, and joint meeting; move-in kit; stabilization requirements.", href: "docs/72 Hour Move In protocol.docx", tag: "Protocols", category: "Protocols" },
+      { title: "Administrator Job Description", blurb: "Program operations, compliance, reporting, and staff leadership.", href: "docs/Administrator Job Description.docx", tag: "Roles", category: "Roles" },
+      { title: "Agency Flyer", blurb: "One-page outreach: partner benefits, next steps, and contact info for agencies joining B2H.", href: "docs/Agency Flyer.pdf", tag: "Partnerships", category: "Partnerships" },
+      { title: "Bridge Housing – Partner Info Sheet", blurb: "Expectations, stay limits, check-ins, incident response, and partnership types for bridge housing vendors.", href: "docs/Bridge_Housing_Partner_Info_Sheet.docx", tag: "Partnerships", category: "Partnerships" },
       { title: "Bridge Housing – Referral Form", blurb: "Internal referral form capturing client info, housing need, support needs, and authorization.", href: "docs/Bridge_Housing_Referral_Form.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Incident Triage Decision Tree", blurb: "Landlord decision tree + hotline SOP for safety screening, urgency, de-escalation, documentation, and follow-up.", href: "docs/Incident_Triage_Decision_Tree.docx", tag: "Protocols", category: "Protocols" },
-      { title: "KPIs with Recommended Tracking", blurb: "KPI set for placement, services, stability, landlord engagement, and data methods across program phases.", href: "docs/KPIs_with_Recommend_Tracking.docx", tag: "Overview", category: "Overview" },
-      { title: "Landlord Flyer", blurb: "Why partner, incentives, support, steps to enroll; quick QR/contact for landlord outreach.", href: "docs/Landlord_Flyer.pdf", tag: "Overview", category: "Partnerships" },
-      { title: "Landlord Overview Deck", blurb: "Slide deck on program, supports, incentives, 24/7 hotline, onboarding steps, and FAQs.", href: "docs/Landlord_Overview_Deck.pdf", tag: "Overview", category: "Partnerships" },
-      { title: "Landlord Incentive Proposal", blurb: "Expanded incentive structure: signing bonus, mitigation fund, holding fees, repair stipend, retention & advance rent options.", href: "docs/Landlord_Incentive_Proposal.docx", tag: "Partnerships", category: "Partnerships" },
-
-      // --- New batch (7) ---
-      { title: "Landlord Invoice & Process", blurb: "Standard monthly invoice template and the end-to-end finance process landlords follow.", href: "docs/Landlord_Invoice_and_Process.docx", tag: "Partnerships", category: "Partnerships" },
-      { title: "Landlord Orientation Packet", blurb: "All-in-one onboarding packet: program overview, incentives, HQS checklist, forms, and contacts.", href: "docs/Landlord_Orientation_Packet.docx", tag: "Partnerships", category: "Partnerships" },
-      { title: "Lease Violation / Incident Form", blurb: "Report template for lease violations and behavioral incidents with triage options and requested supports.", href: "docs/Lease_Violation_Incident_Form.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Pilot Program Staffing Model", blurb: "60-participant staffing mix with roles, FTEs, and justification for multidisciplinary delivery.", href: "docs/Pilot Program Staffing Model.docx", tag: "Overview", category: "Overview" },
-      { title: "Pre- & Post-Release Placement Timeline", blurb: "Milestones from referral through day of release and first 30 days post move-in.", href: "docs/Pre_Post_Release_Placement_Timeline.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Recommendations (Program Enablement)", blurb: "Payments, outreach SOPs, templates, portal, KPIs, evaluation, and language access—concise recommendations.", href: "docs/Recommendations.docx", tag: "Overview", category: "Overview" },
-      { title: "Stabilization & Ongoing Supports – SOP", blurb: "Post-move-in cadence, case conferencing, ISP updates, and escalation protocols (ISH/ESH).", href: "docs/Stabilization and Ongoing Supports SOP.docx", tag: "Protocols", category: "Protocols" }
-    ];
+      { title: "Case Manager Job Description", blurb: "Core duties, competencies, and qualifications for the Case Manager role.", href: "docs/Case Manager Job Description.docx", tag: "Roles", category: "Roles" },
+      { title: "Client Referral Workflow", blurb: "End-to-end referral process from IDOC through housing placement and stabilization.", href: "docs/Client Referral Workflow.docx", tag: "Workflows", category: "Workflows" },
+      { title: "Data Coordinator Job Description", blurb: "Performance data entry, QA, reporting schedules, and trends analysis.", href: "docs/Data Coordinator Job Description.docx", tag: "Roles", category: "Roles" },
+      { title: "Driver Job Description", blurb: "Client transport, safety, logs, and vehicle maintenance.", href: "docs/Driver Job Description.docx", tag: "Roles", category: "Roles" },
+      { title: "Frequently Asked Questions", blurb: "Common questions and answers for landlords and agency partners.", href: "docs/Frequently Asked Questions.docx", tag: "Overview", category: "Overview" },
+      { title: "Housing Eligibility Screening and Intake & Readiness", blurb: "Comprehensive screening tool for housing needs and clinical coordination level.", href: "docs/Housing Eligibility Screening and Intake & Readiness.docx", tag: "Assessments", category: "Assessments" },
+      { title: "Housing Match Workflow", blurb: "Step-by-step housing match process including legal restrictions and service proximity.", href: "docs/Housing Match Workflow.docx", tag: "Workflows", category: "Workflows" },
+      { title: "Housing Provider Directory", blurb: "Provider contact list and service areas.", href: "docs/Housing Provider Directory.xlsx", tag: "Overview", category: "Overview" },
+      { title: "Implementation Plan", blurb: "Phase-by-phase plan: feasibility through continuous improvement with milestones and outputs.", href: "docs/Implementation Plan.docx", tag: "Overview", category: "Overview" },
+      { title: "Incident Triage Decision Tree", blurb: "Decision tree for safety screening, urgency, de-escalation, documentation, and follow-up.", href: "docs/Incident Triage Decision Tree.docx", tag: "Protocols", category: "Protocols" },
+      { title: "Internal Bridge Housing Protocol", blurb: "Guidance for bridge housing placements, vendor setup, incident response, and exits.", href: "docs/Internal_Bridge_Housing_Protocol.docx", tag: "Protocols", category: "Protocols" },
+      { title: "KPIs with Recommend Tracking", blurb: "KPI set for placement, services, stability, landlord engagement, and tracking methods.", href: "docs/KPIs_with_Recommend Tracking.docx", tag: "Overview", category: "Overview" },
+      { title: "Landlord Flyer", blurb: "Why partner, incentives, support, steps to enroll.", href: "docs/Landlord Flyer.pdf", tag: "Partnerships", category: "Partnerships" },
+      { title: "Landlord Overview Deck", blurb: "Program, supports, incentives, hotline, onboarding steps, and FAQs.", href: "docs/Landlord Overview Deck.pdf", tag: "Partnerships", category: "Partnerships" },
+      { title: "Landlord Incentive Proposal", blurb: "Signing bonus, mitigation fund, holding fees, repair stipend, retention & advance rent options.", href: "docs/Landlord_Incentive_Proposal.docx", tag: "Partnerships", category: "Partnerships" },
+      { title: "Landlord Invoice and Process", blurb: "Monthly invoice template and the end-to-end finance workflow.", href: "docs/Landlord_Invoice_and_Process.docx", tag: "Partnerships", category: "Partnerships" },
+      { title: "Landlord Orientation Packet", blurb: "Onboarding packet: overview, incentives, HQS checklist, forms, contacts.", href: "docs/Landlord_Orientation_Packet.docx", tag: "Partnerships", category: "Partnerships" },
+      { title: "Lease Violation / Incident Form", blurb: "Report template for lease violations and behavioral incidents with triage options.", href: "docs/Lease_Violation_Incident_Form.docx", tag: "Protocols", category: "Protocols" },
+      { title: "Move-In Checklist", blurb: "Tenant kit checklist to support safe, dignified, stable first days in housing.", href: "docs/Move-In Checklist.docx", tag: "Protocols", category: "Protocols" },
+      { title: "Network Housing Developer Job Description", blurb: "Landlord outreach, inspections, unit pipeline building, tenancy support.", href: "docs/Network Housing Developer Job Description.docx", tag: "Roles", category: "Roles" },
+      { title: "Opportunity Notice", blurb: "Program overview for landlords and agencies—counties served, benefits, onboarding steps.", href: "docs/Opportunity Notice.docx", tag: "Overview", category: "Overview" },
+      { title: "Peer Support Specialist Job Description", blurb: "Lived-experience peer role supporting recovery, engagement, and stabilization.", href: "docs/Peer Support Specialist Job Description.docx", tag: "Roles", category: "Roles" },
+      { title: "Pilot Program Staffing Model", blurb: "60-participant staffing mix with roles, FTEs, and justification.", href: "docs/Pilot Program Staffing Model.docx", tag: "Overview", category: "Overview" },
+      { title: "Pre & Post Release Placement Timeline", blurb: "Milestones from referral through day of release and first 30 days post move-in.", href: "docs/Pre_Post_Release_Placement_Timeline.docx", tag: "Workflows", category: "Workflows" },
+      { title: "Recommendations", blurb: "Payments, outreach SOPs, templates, portal, KPIs, evaluation, and language access.", href: "docs/Recommendations.docx", tag: "Overview", category: "Overview" },
+      { title: "Roles and Responsibilities", blurb: "At-a-glance duties for Director, Administrator, Supervisor, Case Manager, PSS, NHD, etc.", href: "docs/Roles and Responsibilities.docx", tag: "Roles", category: "Roles" },
+      { title: "Service Provider Directory", blurb: "Service provider contacts and notes.", href: "docs/Service_Provider.xlsx", tag: "Overview", category: "Overview" },
+      { title: "Stabilization and Ongoing Supports SOP", blurb: "Post-move-in cadence, case conferencing, ISP updates, escalation protocols (ISH/ESH).", href: "docs/Stabilization and Ongoing Supports SOP.docx", tag: "Protocols", category: "Protocols" },
+      { title: "Sub-Contracting Workflow", blurb: "Process to engage and manage subcontracting partners from due diligence to oversight.", href: "docs/Sub-Contracting Workflow.docx", tag: "Workflows", category: "Workflows" },
+      { title: "Suitability Assessment", blurb: "Readiness assessment tool for housing evaluation.", href: "docs/Suitability_Assessment.docx", tag: "Assessments", category: "Assessments" },
+      { title: "Supervisor Job Description", blurb: "Clinical supervision, team leadership, QA, stakeholder coordination.", href: "docs/Supervisor Job Description.docx", tag: "Roles", category: "Roles" }
+    $2
 
     // ======= STATE =======
     let state = { q: "", category: "All Documents" };
@@ -184,21 +199,21 @@
         return inCat && inSearch;
       });
 
-      grid.innerHTML = filtered.map(d => {
+      grid.innerHTML = filtered.map((d, i) => {
         const fileName = d.href.split('/').pop();
         return `
-        <div class="card rounded-2xl border border-slate-200 p-5 transition shadow-sm bg-white">
+        <div class="card rounded-2xl border border-slate-200 p-5 transition shadow-sm bg-white cursor-pointer" data-idx="${i}">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="h-10 w-10 grid place-items-center rounded-xl bg-rose-50 text-rose-600 border border-rose-100">
                 <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5\"/></svg>
               </div>
               <div>
-                <a href="${d.href}" class="font-semibold leading-snug hover:underline">${d.title}</a>
+                <div class="font-semibold leading-snug hover:underline">${d.title}</div>
                 <div class="mt-1">${pill(d.tag)}</div>
               </div>
             </div>
-            <a href="${d.href}" download="${fileName}" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium" title="Download">
+            <a href="${encodeURI(d.href)}" download="${fileName}" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium" title="Download" onclick="event.stopPropagation()">
               <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 3v12m0 0 4-4m-4 4-4-4M4 21h16\"/></svg>
               Download
             </a>
@@ -207,9 +222,41 @@
         </div>`;
       }).join('');
 
-      // update count at top
+      // attach click to open drawer
+      grid.querySelectorAll('.card').forEach(el => {
+        el.addEventListener('click', () => {
+          const idx = +el.getAttribute('data-idx');
+          const d = filtered[idx];
+          openDrawer(d);
+        });
+      });
+
       document.getElementById('docCount').textContent = DOCS.length;
     }
+
+    function openDrawer(d){
+      const drawer = document.getElementById('drawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      document.getElementById('drawerTitle').textContent = d.title;
+      document.getElementById('drawerBlurb').textContent = d.blurb;
+      document.getElementById('drawerView').setAttribute('href', encodeURI(d.href));
+      const fileName = d.href.split('/').pop();
+      const dl = document.getElementById('drawerDownload');
+      dl.setAttribute('href', encodeURI(d.href));
+      dl.setAttribute('download', fileName);
+      drawer.style.transform = 'translateX(0)';
+      backdrop.classList.remove('hidden');
+    }
+
+    function closeDrawer(){
+      const drawer = document.getElementById('drawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      drawer.style.transform = 'translateX(100%)';
+      backdrop.classList.add('hidden');
+    }
+
+    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+    document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
 
     document.getElementById('searchInput').addEventListener('input', (e)=>{
       state.q = e.target.value;

@@ -15,7 +15,7 @@
       --brand:#C2185B; --brandDark:#9B1349; --ink:#0F172A; --pill:#F1F5F9;
       --slate:#64748B; --line:#E2E8F0; --card:#FFFFFF;
     }
-    /* Header gradient and subtle pattern */
+    /* Header gradient + subtle light flares */
     .brand-gradient {
       background:
         radial-gradient(1200px 300px at 15% -10%, rgba(255,255,255,.18), transparent 60%),
@@ -42,11 +42,17 @@
     .btn-chip { border:1px solid #E5E7EB; background:#FFFFFF; }
     .btn-chip.active { background:#0F172A; color:white; border-color:#0F172A; }
     .drawer-open { transform: translateX(0) !important; }
+    /* Acronyms floating button */
+    .fab { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
+    .fab > button { box-shadow: 0 10px 24px rgba(15,23,42,.2); }
+    /* Acronyms overlay */
+    .overlay { transform: translateX(105%); }
+    .overlay-open { transform: translateX(0) !important; }
   </style>
 </head>
 <body class="bg-white text-slate-800 selection:bg-rose-100 selection:text-rose-900">
 
-  <!-- Sticky Header (buttons removed, modernized) -->
+  <!-- Header -->
   <header class="brand-gradient text-white sticky-h">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
       <div class="flex items-center justify-start gap-4">
@@ -110,7 +116,7 @@
     </div>
   </main>
 
-  <!-- Details Drawer -->
+  <!-- Document Drawer -->
   <aside id="drawer" class="fixed inset-y-0 right-0 w-full max-w-lg bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 z-50">
     <div class="h-full flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b">
@@ -138,30 +144,64 @@
   </aside>
   <div id="drawerBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40 hidden"></div>
 
-  <!-- Footer with logos -->
+  <!-- Footer with bigger Centric logo -->
   <footer class="border-t">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
-      <!-- Left: TASC logo -->
+      <!-- Left: TASC -->
       <div class="flex items-center gap-3 min-w-0">
         <img id="tascLogo" src="assets/tasc-logo.png" alt="TASC" class="h-12 sm:h-14 lg:h-16 w-auto object-contain">
         <span class="text-xs text-slate-500 truncate">© TASC – B.R.I.D.G.E. To Home</span>
       </div>
-
-      <!-- Right: Prepared by Centric Strategies + logo -->
+      <!-- Right: Centric (larger) -->
       <div class="flex items-center gap-2 shrink-0">
         <span class="text-xs text-slate-500">Prepared by</span>
-        <img id="centricLogo" src="assets/centric-logo.png" alt="Centric Strategies" class="h-10 sm:h-12 lg:h-14 w-auto object-contain">
+        <img id="centricLogo" src="assets/centric-logo.png" alt="Centric Strategies" class="h-14 sm:h-16 lg:h-20 w-auto object-contain">
         <span class="text-xs text-slate-600">Centric Strategies</span>
       </div>
     </div>
   </footer>
 
+  <!-- Floating Acronyms Button -->
+  <div class="fab">
+    <button id="openAcronyms"
+            class="rounded-full bg-white text-slate-900 border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+      Acronyms
+    </button>
+  </div>
+
+  <!-- Acronyms Overlay (slides in from right) -->
+  <aside id="acronymsPanel" class="overlay fixed inset-y-0 right-0 w-full max-w-xl bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 z-[70]">
+    <div class="h-full flex flex-col">
+      <div class="flex items-center justify-between px-5 py-4 border-b">
+        <div>
+          <h3 class="text-lg font-semibold">Acronyms & Terms</h3>
+          <p class="text-xs text-slate-500">Quick reference for documents in this library</p>
+        </div>
+        <button id="closeAcronyms" class="rounded-lg px-2 py-1 hover:bg-slate-100" aria-label="Close acronyms panel">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+      <div class="p-5 border-b">
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
+          </span>
+          <input id="acrSearch" type="text" placeholder="Search acronyms or definitions…"
+                 class="w-full rounded-xl bg-white text-slate-900 pl-9 pr-3 py-2 ring-1 ring-slate-200 focus:ring-2 focus:ring-slate-400 outline-none"/>
+        </div>
+      </div>
+      <div class="p-0 overflow-y-auto">
+        <ul id="acrList" class="divide-y divide-slate-100"></ul>
+      </div>
+    </div>
+  </aside>
+  <div id="acronymsBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[65] hidden"></div>
+
   <script>
     // -------------------------
-    // Data: EXACT filenames in /docs/
+    // DATA: Library (unchanged – your docs)
     // -------------------------
     const DOCS = [
-      // Batch 1
       { title:"24/7 Hotline SOP (Landlords & Participants)", blurb:"Always-available contact pathway; triage, escalation, documentation, follow-up.", href:"docs/24x7_Hotline_SOP.docx", tag:"Protocols", category:"Protocols",
         summary:"Standard operating procedures for the B2H hotline covering purpose, scope, definitions, hours/access, RACI roles (Triage Specialist, On-Call Case Manager, Supervisor, PQI/Data), and verification steps. Includes a decision tree for life-safety (911 guidance and notifications), urgent non-life-safety (lockout, leaks, heat outage, welfare checks) with warm transfers and paging rules, and routine requests (AP/billing, minor maintenance) queued to case managers. Sets response SLAs (pickup, callback, escalation), ready-to-use scripts, and ECR documentation templates (Hotline Incident note, follow-up task, supervisor notification). Addresses special scenarios (behavioral health/SUD distress, bridge housing incidents, law enforcement), on-call scheduling, contingency/outage procedures, metrics/PQI review, privacy/ROI/PHI safeguards, and training/tabletop exercises. Key appendices list call categories and required ECR data elements." },
       { title:"72 Hour Move In protocol", blurb:"72-hr orientation for tenant/landlord; move-in kit; stabilization.", href:"docs/72 Hour Move In protocol.docx", tag:"Protocols", category:"Protocols",
@@ -173,7 +213,6 @@
       { title:"Agency Partnership Overview", blurb:"Slide deck: program, roles, supports, FAQs, next steps.", href:"docs/Agency_Overview.pdf", tag:"Partnerships", category:"Partnerships",
         summary:"Deck describing B2H and the central role agencies play in housing stability. Covers program model (placements + wraparound services; intensive case management; 24/7 hotline), agency responsibilities (identify clients, coordinate ISPs with TASC, provide services, participate in case conferencing and reporting), supports to agencies (orientation, clear referrals, housing liaisons, shared resources), FAQs, and next steps (contact B2H, submit LOI/Interest Form, onboarding calls, begin referrals)." },
 
-      // Batch 2
       { title:"Agency Referral Form", blurb:"Submit referrals from TASC to partner agencies.", href:"docs/Agency_Referral_Form.docx", tag:"Workflows", category:"Workflows",
         summary:"Structured form to connect clients to partner service agencies. Captures referrer details, client identifiers, current housing status, services requested (MH, SUD, employment, education, family), readiness/willingness, barriers (transportation, scheduling), and follow-up workflow (date sent, agency contact, appointment, projected lease-up, verification call, engagement outcomes). Signature lines for referring staff and CM." },
       { title:"Bridge Housing – Partner Info Sheet", blurb:"Expectations, limits, check-ins, incident response.", href:"docs/Bridge_Housing_Partner_Info_Sheet.docx", tag:"Partnerships", category:"Partnerships",
@@ -185,7 +224,6 @@
       { title:"Client Referral Workflow", blurb:"From IDOC referral to lease-ready placement and stabilization.", href:"docs/Client Referral Workflow.docx", tag:"Workflows", category:"Workflows",
         summary:"End-to-end process ~90 days pre-release: secure intake packet; quick eligibility; CM assignment; landlord engagement & unit matching; intake & Supportive Housing Eligibility/Readiness Assessment (ISH/ESH); inspection; documentation (ISP, lease, W-9/ACH); supervisory approval; move-in day logistics; 72-hour protocol; post-placement check-ins and outcome tracking at 6/12 months." },
 
-      // Batch 3
       { title:"Data Coordinator Job Description", blurb:"Performance data entry, QA, and reporting.", href:"docs/Data Coordinator Job Description.docx", tag:"Roles", category:"Roles",
         summary:"Role within PQI focused on data accuracy/completeness, CRM reconciliation, trend analysis, and timely monthly/quarterly reports. Supports ops via master docs and gathering inputs from landlords/stakeholders. Requires 2+ yrs admin + 2+ yrs data entry/reporting, advanced MS Office, and strong attention to detail; includes schedule/travel/background expectations." },
       { title:"Driver Job Description", blurb:"Transport clients safely between IDOC, housing, and services.", href:"docs/Driver Job Description.docx", tag:"Roles", category:"Roles",
@@ -197,7 +235,6 @@
       { title:"Housing Match Workflow", blurb:"End-to-end matching steps with legal/service constraints.", href:"docs/Housing Match Workflow.docx", tag:"Workflows", category:"Workflows",
         summary:"Eight-step matching flow: readiness/level-of-care confirmation; needs & legal restrictions; landlord/unit identification; pre-inspection; match scoring (legal compliance, proximity, readiness, willingness); case conference; lease execution & move-in; stabilization & monitoring (ISH monthly; ESH weekly+)." },
 
-      // Batch 4
       { title:"Housing Provider Directory", blurb:"Provider contacts and service areas.", href:"docs/Housing Provider Directory.xlsx", tag:"Overview", category:"Overview",
         summary:"Master spreadsheet of housing providers for matching and outreach. Typical fields: provider, contact, counties served, unit types, rents, voucher acceptance, notes (reentry-friendly), inspection requirements, and collaboration history. Filter by county, proximity, accessibility, and participation status." },
       { title:"Implementation Plan", blurb:"Phased plan & milestones.", href:"docs/Implementation Plan.docx", tag:"Overview", category:"Overview",
@@ -209,7 +246,6 @@
       { title:"KPIs with Recommend Tracking", blurb:"KPIs for placement, services, stability.", href:"docs/KPIs_with_Recommend Tracking.docx", tag:"Overview", category:"Overview",
         summary:"Catalog of current and recommended KPIs with tracking methods. Existing: timely placement, ISP completion, BH/medical linkage, 72-Hour protocol, CM touchpoints, retention, landlord engagement, incident response. Recommended: referral-to-placement time, language access, satisfaction, ISP milestones, benefits, employment linkage, landlord retention/reutilization, and legal compliance." },
 
-      // Batch 5 (Landlords)
       { title:"Landlord Flyer", blurb:"Why partner, supports, and how to get started.", href:"docs/Landlord Flyer.pdf", tag:"Partnerships", category:"Partnerships",
         summary:"One-page invite for property owners: program overview (housing + supports), value to landlords (reliable rent, coordinated supports), and how to begin (LOI/Interest Form, orientation). QR for quick start and central contact." },
       { title:"Landlord Overview Deck", blurb:"Slide deck: program, supports, incentives, FAQs.", href:"docs/Landlord Overview Deck.pdf", tag:"Partnerships", category:"Partnerships",
@@ -221,7 +257,6 @@
       { title:"Landlord Orientation Packet", blurb:"Onboarding packet: program, incentives, HQS, forms, contacts.", href:"docs/Landlord_Orientation_Packet.docx", tag:"Partnerships", category:"Partnerships",
         summary:"Comprehensive provider onboarding: program intro; population served; 24/7 hotline; incident reporting; incentive options and claim process; compliance (HQS pre-inspection, maintenance SLAs); and forms (lease template, HQS checklist, W-9/ACH, incentive claim, sign-offs)." },
 
-      // Batch 6
       { title:"Lease Violation / Incident Form", blurb:"Incident/violation report.", href:"docs/Lease_Violation_Incident_Form.docx", tag:"Protocols", category:"Protocols",
         summary:"Complete within 24h: general info, type, narrative, threat assessment, immediate actions, support requested, history, notes, signature. Emergencies: hotline/911 first, then submit." },
       { title:"Move-In Checklist", blurb:"Move-in kit checklist.", href:"docs/Move-In Checklist.docx", tag:"Protocols", category:"Protocols",
@@ -233,7 +268,6 @@
       { title:"Peer Support Specialist Job Description", blurb:"Peer role supporting recovery.", href:"docs/Peer Support Specialist Job Description.docx", tag:"Roles", category:"Roles",
         summary:"Uses lived experience to promote engagement, recovery, and stability: relationship-building, appointments, ISP collaboration, groups, coping skills, move-in support, linkages, documentation, safety escalation; CRSS/CPRS preferred or attainable." },
 
-      // Batch 7
       { title:"Pilot Program Staffing Model", blurb:"60-participant staffing mix.", href:"docs/Pilot Program Staffing Model.docx", tag:"Overview", category:"Overview",
         summary:"Role mix/FTEs/salary bands sized for ~60 participants: Ops leadership, Supervisors, Case Managers, Peer Support, Housing Developers, Data Coordinator, Drivers, and evaluation support." },
       { title:"Pre & Post Release Placement Timeline", blurb:"Milestones pre/post release.", href:"docs/Pre_Post_Release_Placement_Timeline.docx", tag:"Workflows", category:"Workflows",
@@ -245,7 +279,6 @@
       { title:"Service Provider Directory", blurb:"Service provider contacts.", href:"docs/Service_Provider.xlsx", tag:"Overview", category:"Overview",
         summary:"Master Excel directory for referrals: agency, program type, contacts, coverage areas, eligibility notes, languages; filter by county/service/language; keep capacity/intake notes current." },
 
-      // Batch 8 (+ new HQS checklist)
       { title:"HQS Pre-Inspection Checklist", blurb:"Pre-HQS check before lease-up.", href:"docs/HQS_Pre_Inspection_Checklist.docx", tag:"Protocols", category:"Protocols",
         summary:"Field checklist verifying habitability prior to formal inspection: health/safety, living/bedroom, kitchen, bathroom, utilities, exterior/common. Result: Pass / Conditional (repairs) / Fail; with signatures." },
       { title:"Sub-Contracting Workflow", blurb:"Process to engage and manage subcontractors.", href:"docs/Sub-Contracting Workflow.docx", tag:"Workflows", category:"Workflows",
@@ -255,9 +288,54 @@
       { title:"Supervisor Job Description", blurb:"Clinical supervision, team leadership, QA.", href:"docs/Supervisor Job Description.docx", tag:"Roles", category:"Roles",
         summary:"Leads multidisciplinary team; ensures individualized, evidence-based care; oversees operations, QA, reporting, staffing, and partner relationships; master’s + IL license required; supervisory experience." },
 
-      // Not yet in a batch (from your list)
       { title:"Stabilization and Ongoing Supports SOP", blurb:"Post-move-in cadence & escalation.", href:"docs/Stabilization and Ongoing Supports SOP.docx", tag:"Protocols", category:"Protocols",
         summary:"Ongoing supports after placement: visit cadence (ISH vs. ESH), case conferencing, ISP updates, documentation within set timelines, and escalation ladder (ISH/ESH) through hotline and supervisory review." }
+    ];
+
+    // -------------------------
+    // DATA: Acronyms & Terms (searchable in overlay)
+    // -------------------------
+    const ACRONYMS = [
+      ["ACH","Automated Clearing House (electronic bank transfer for payments)"],
+      ["ADA","Americans with Disabilities Act (accessibility requirements)"],
+      ["AP","Accounts Payable (finance function paying invoices)"],
+      ["BH","Behavioral Health (includes mental health and substance use)"],
+      ["B2H","BRIDGE To Home (program name: Building Resilience, Independence, Dignity, Growth, Empowerment)"],
+      ["CADC","Certified Alcohol and Drug Counselor (credential)"],
+      ["CARS","Computerized Assessment and Referral System / state credential pathway (contextual)"],
+      ["CM","Case Manager"],
+      ["COI","Certificate of Insurance (vendor/landlord documentation)"],
+      ["CRM","Customer/Client Relationship Management system (data system)"],
+      ["ECR","Electronic Case Record (system of record for notes/tasks/files)"],
+      ["EEO","Equal Employment Opportunity"],
+      ["ESH","Enhanced Supportive Housing (higher-intensity supportive housing)"],
+      ["FTE","Full-Time Equivalent (staffing measure)"],
+      ["HQS","Housing Quality Standards (habitability checklist/inspection)"],
+      ["HUD","U.S. Department of Housing and Urban Development"],
+      ["IDOC","Illinois Department of Corrections"],
+      ["ISH","Independent Supportive Housing (lower-intensity supportive housing)"],
+      ["ISP","Individualized Service Plan (case plan)"],
+      ["KPI","Key Performance Indicator"],
+      ["LOI","Letter of Intent (also used as Interest Form for partners/landlords)"],
+      ["MOU","Memorandum of Understanding (agreement)"],
+      ["MSR","Mandatory Supervised Release (parole)"],
+      ["NHD","Network Housing Developer (landlord outreach / unit pipeline)"],
+      ["PHI","Protected Health Information (HIPAA-covered)"],
+      ["PMO","Project Management Office / governance cadence"],
+      ["PQI","Performance & Quality Improvement (data/QA team)"],
+      ["P&P","Parole & Probation (justice supervision partners)"],
+      ["QA","Quality Assurance"],
+      ["QR","Quick Response (code) used on flyers/forms"],
+      ["RACI","Responsible, Accountable, Consulted, Informed (roles matrix)"],
+      ["ROI","Release of Information (consent to share data)"],
+      ["SLA","Service Level Agreement (response/processing timeline)"],
+      ["SMI","Serious Mental Illness"],
+      ["SOP","Standard Operating Procedure"],
+      ["SOR","Sex Offender Registration (residency restrictions apply)"],
+      ["SRO","Single Room Occupancy (unit type)"],
+      ["SUD","Substance Use Disorder"],
+      ["TASC","Treatment Alternatives for Safe Communities (lead agency)"],
+      ["W-9","IRS Request for Taxpayer Identification (vendor onboarding)"]
     ];
 
     // -------------------------
@@ -272,7 +350,6 @@
       { name: "Roles" },
       { name: "Workflows" },
     ];
-
     function iconFor(href){
       const n = href.toLowerCase();
       if (n.endsWith(".pdf")) return "pdf";
@@ -304,7 +381,7 @@
     let state = { q:"", category:"All Documents", sort:"relevance" };
 
     // -------------------------
-    // Render filters (as modern chips)
+    // Filters (chip-style)
     // -------------------------
     function renderFilters(){
       const holder = document.getElementById("filters");
@@ -339,7 +416,7 @@
     }
 
     // -------------------------
-    // Search & Sort helpers
+    // Search & Sort
     // -------------------------
     function haystack(d){
       return (d.title + " " + (d.blurb||"") + " " + (d.summary||"")).toLowerCase();
@@ -349,7 +426,7 @@
       if (s === "az") return [...arr].sort((a,b)=>a.title.localeCompare(b.title));
       if (s === "za") return [...arr].sort((a,b)=>b.title.localeCompare(a.title));
       if (s === "category") return [...arr].sort((a,b)=> (a.category.localeCompare(b.category)) || a.title.localeCompare(b.title));
-      return arr; // relevance: keep filtered order
+      return arr; // relevance = keep filtered order
     }
 
     // -------------------------
@@ -425,6 +502,45 @@
     }
 
     // -------------------------
+    // Acronyms overlay logic
+    // -------------------------
+    const acrPanel = document.getElementById('acronymsPanel');
+    const acrBackdrop = document.getElementById('acronymsBackdrop');
+    document.getElementById('openAcronyms').addEventListener('click', ()=> {
+      acrPanel.classList.add('overlay-open');
+      acrBackdrop.classList.remove('hidden');
+      document.getElementById('acrSearch').focus();
+    });
+    function closeAcr(){
+      acrPanel.classList.remove('overlay-open');
+      acrBackdrop.classList.add('hidden');
+    }
+    document.getElementById('closeAcronyms').addEventListener('click', closeAcr);
+    acrBackdrop.addEventListener('click', closeAcr);
+
+    function renderAcrList(q=""){
+      const list = document.getElementById('acrList');
+      const txt = q.trim().toLowerCase();
+      const items = ACRONYMS
+        .filter(([k,v]) => !txt || k.toLowerCase().includes(txt) || v.toLowerCase().includes(txt))
+        .sort((a,b)=> a[0].localeCompare(b[0]));
+      list.innerHTML = items.map(([k,v]) => `
+        <li class="px-5 py-3">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="text-sm font-semibold text-slate-800">${k}</div>
+              <div class="text-sm text-slate-600">${v}</div>
+            </div>
+          </div>
+        </li>
+      `).join('');
+      if (!items.length){
+        list.innerHTML = `<li class="px-5 py-6 text-sm text-slate-500">No matches. Try another term.</li>`;
+      }
+    }
+    document.getElementById('acrSearch').addEventListener('input', (e)=> renderAcrList(e.target.value));
+
+    // -------------------------
     // Events
     // -------------------------
     document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
@@ -437,6 +553,7 @@
       renderFilters();
       await loadExternalSummaries(); // supports /summaries/<filename>.txt overrides
       renderCards();
+      renderAcrList();
     })();
   </script>
 </body>

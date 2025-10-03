@@ -4,21 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2H Implementation Plan</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { --brand:#C2185B; --brandDark:#9B1349; --pill:#F1F5F9; }
-    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
     .brand-gradient { background: linear-gradient(180deg, var(--brand) 0%, var(--brandDark) 100%); }
     .card:hover { box-shadow: 0 10px 24px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06); transform: translateY(-1px); }
     .badge { background: var(--pill); }
     .truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .srch input::placeholder{ color:#9AA0A6; }
-    summary { list-style: none; }
-    summary::-webkit-details-marker { display:none; }
   </style>
 </head>
 <body class="bg-white text-slate-800">
@@ -39,7 +36,6 @@
         </div>
       </div>
       <p class="mt-1 text-sm text-white/90"><span id="docCount">0</span> documents</p>
-      <!-- Search -->
       <div class="mt-5 srch">
         <label class="block">
           <div class="relative">
@@ -48,7 +44,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" />
               </svg>
             </span>
-            <input id="searchInput" type="text" placeholder="Search implementation plan documents..." class="w-full rounded-2xl bg-white/10 text-white placeholder-white/80 pl-10 pr-4 py-3 outline-none ring-1 ring-white/25 focus:ring-2 focus:ring-white/60" />
+            <input id="searchInput" type="text" placeholder="Search implementation plan documents..."
+                   class="w-full rounded-2xl bg-white/10 text-white placeholder-white/80 pl-10 pr-4 py-3 outline-none ring-1 ring-white/25 focus:ring-2 focus:ring-white/60" />
           </div>
         </label>
       </div>
@@ -58,22 +55,24 @@
   <!-- Main -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-24">
     <div class="mb-6">
-      <h2 class="text-sm font-semibold tracking-wide text-slate-500">B.R.I.D.G.E. To Home – <span class="font-normal">Building Resilience, Independence, Dignity, Growth, Empowerment</span></h2>
+      <h2 class="text-sm font-semibold tracking-wide text-slate-500">
+        B.R.I.D.G.E. To Home – <span class="font-normal">Building Resilience, Independence, Dignity, Growth, Empowerment</span>
+      </h2>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      <!-- Left Filters -->
       <aside class="lg:col-span-3">
         <h3 class="text-sm font-semibold text-slate-600 mb-3">Categories</h3>
         <div id="filters" class="space-y-1"></div>
       </aside>
 
-      <!-- Content Grid -->
       <section class="lg:col-span-9">
         <div id="cardsGrid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
       </section>
     </div>
-    <!-- Details Drawer -->
+  </main>
+
+  <!-- Details Drawer -->
   <aside id="drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 z-50">
     <div class="h-full flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b">
@@ -97,80 +96,110 @@
       </div>
     </div>
   </aside>
-
   <div id="drawerBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40 hidden"></div>
 
-</main>
+  <footer class="border-t py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div class="text-xs text-slate-500">© TASC – Treatment Alternatives for Safe Communities</div>
+      <a href="#" class="text-xs text-slate-500 hover:text-slate-700">Theme</a>
+    </div>
+  </footer>
 
-<script>
-    // ======= DOCUMENT DATA =======
-    // Upload files to /docs/ and ensure names match the hrefs below.
-    $1
-      { title: "24/7 Hotline SOP (Landlords & Participants)", blurb: "Always-available contact pathway; triage, escalation, documentation, follow-up standards for safety and continuity.", href: "docs/24x7_Hotline_SOP.docx", tag: "Protocols", category: "Protocols" },
-      { title: "72 Hour Move In protocol", blurb: "Day-by-day orientation for tenant, landlord, and joint meeting; move-in kit; stabilization requirements.", href: "docs/72 Hour Move In protocol.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Administrator Job Description", blurb: "Program operations, compliance, reporting, and staff leadership.", href: "docs/Administrator Job Description.docx", tag: "Roles", category: "Roles" },
-      { title: "Agency Flyer", blurb: "One-page outreach: partner benefits, next steps, and contact info for agencies joining B2H.", href: "docs/Agency Flyer.pdf", tag: "Partnerships", category: "Partnerships" },
-      { title: "Bridge Housing – Partner Info Sheet", blurb: "Expectations, stay limits, check-ins, incident response, and partnership types for bridge housing vendors.", href: "docs/Bridge_Housing_Partner_Info_Sheet.docx", tag: "Partnerships", category: "Partnerships" },
-      { title: "Bridge Housing – Referral Form", blurb: "Internal referral form capturing client info, housing need, support needs, and authorization.", href: "docs/Bridge_Housing_Referral_Form.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Case Manager Job Description", blurb: "Core duties, competencies, and qualifications for the Case Manager role.", href: "docs/Case Manager Job Description.docx", tag: "Roles", category: "Roles" },
-      { title: "Client Referral Workflow", blurb: "End-to-end referral process from IDOC through housing placement and stabilization.", href: "docs/Client Referral Workflow.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Data Coordinator Job Description", blurb: "Performance data entry, QA, reporting schedules, and trends analysis.", href: "docs/Data Coordinator Job Description.docx", tag: "Roles", category: "Roles" },
-      { title: "Driver Job Description", blurb: "Client transport, safety, logs, and vehicle maintenance.", href: "docs/Driver Job Description.docx", tag: "Roles", category: "Roles" },
-      { title: "Frequently Asked Questions", blurb: "Common questions and answers for landlords and agency partners.", href: "docs/Frequently Asked Questions.docx", tag: "Overview", category: "Overview" },
-      { title: "Housing Eligibility Screening and Intake & Readiness", blurb: "Comprehensive screening tool for housing needs and clinical coordination level.", href: "docs/Housing Eligibility Screening and Intake & Readiness.docx", tag: "Assessments", category: "Assessments" },
-      { title: "Housing Match Workflow", blurb: "Step-by-step housing match process including legal restrictions and service proximity.", href: "docs/Housing Match Workflow.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Housing Provider Directory", blurb: "Provider contact list and service areas.", href: "docs/Housing Provider Directory.xlsx", tag: "Overview", category: "Overview" },
-      { title: "Implementation Plan", blurb: "Phase-by-phase plan: feasibility through continuous improvement with milestones and outputs.", href: "docs/Implementation Plan.docx", tag: "Overview", category: "Overview" },
-      { title: "Incident Triage Decision Tree", blurb: "Decision tree for safety screening, urgency, de-escalation, documentation, and follow-up.", href: "docs/Incident Triage Decision Tree.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Internal Bridge Housing Protocol", blurb: "Guidance for bridge housing placements, vendor setup, incident response, and exits.", href: "docs/Internal_Bridge_Housing_Protocol.docx", tag: "Protocols", category: "Protocols" },
-      { title: "KPIs with Recommend Tracking", blurb: "KPI set for placement, services, stability, landlord engagement, and tracking methods.", href: "docs/KPIs_with_Recommend Tracking.docx", tag: "Overview", category: "Overview" },
-      { title: "Landlord Flyer", blurb: "Why partner, incentives, support, steps to enroll.", href: "docs/Landlord Flyer.pdf", tag: "Partnerships", category: "Partnerships" },
-      { title: "Landlord Overview Deck", blurb: "Program, supports, incentives, hotline, onboarding steps, and FAQs.", href: "docs/Landlord Overview Deck.pdf", tag: "Partnerships", category: "Partnerships" },
-      { title: "Landlord Incentive Proposal", blurb: "Signing bonus, mitigation fund, holding fees, repair stipend, retention & advance rent options.", href: "docs/Landlord_Incentive_Proposal.docx", tag: "Partnerships", category: "Partnerships" },
-      { title: "Landlord Invoice and Process", blurb: "Monthly invoice template and the end-to-end finance workflow.", href: "docs/Landlord_Invoice_and_Process.docx", tag: "Partnerships", category: "Partnerships" },
-      { title: "Landlord Orientation Packet", blurb: "Onboarding packet: overview, incentives, HQS checklist, forms, contacts.", href: "docs/Landlord_Orientation_Packet.docx", tag: "Partnerships", category: "Partnerships" },
-      { title: "Lease Violation / Incident Form", blurb: "Report template for lease violations and behavioral incidents with triage options.", href: "docs/Lease_Violation_Incident_Form.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Move-In Checklist", blurb: "Tenant kit checklist to support safe, dignified, stable first days in housing.", href: "docs/Move-In Checklist.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Network Housing Developer Job Description", blurb: "Landlord outreach, inspections, unit pipeline building, tenancy support.", href: "docs/Network Housing Developer Job Description.docx", tag: "Roles", category: "Roles" },
-      { title: "Opportunity Notice", blurb: "Program overview for landlords and agencies—counties served, benefits, onboarding steps.", href: "docs/Opportunity Notice.docx", tag: "Overview", category: "Overview" },
-      { title: "Peer Support Specialist Job Description", blurb: "Lived-experience peer role supporting recovery, engagement, and stabilization.", href: "docs/Peer Support Specialist Job Description.docx", tag: "Roles", category: "Roles" },
-      { title: "Pilot Program Staffing Model", blurb: "60-participant staffing mix with roles, FTEs, and justification.", href: "docs/Pilot Program Staffing Model.docx", tag: "Overview", category: "Overview" },
-      { title: "Pre & Post Release Placement Timeline", blurb: "Milestones from referral through day of release and first 30 days post move-in.", href: "docs/Pre_Post_Release_Placement_Timeline.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Recommendations", blurb: "Payments, outreach SOPs, templates, portal, KPIs, evaluation, and language access.", href: "docs/Recommendations.docx", tag: "Overview", category: "Overview" },
-      { title: "Roles and Responsibilities", blurb: "At-a-glance duties for Director, Administrator, Supervisor, Case Manager, PSS, NHD, etc.", href: "docs/Roles and Responsibilities.docx", tag: "Roles", category: "Roles" },
-      { title: "Service Provider Directory", blurb: "Service provider contacts and notes.", href: "docs/Service_Provider.xlsx", tag: "Overview", category: "Overview" },
-      { title: "Stabilization and Ongoing Supports SOP", blurb: "Post-move-in cadence, case conferencing, ISP updates, escalation protocols (ISH/ESH).", href: "docs/Stabilization and Ongoing Supports SOP.docx", tag: "Protocols", category: "Protocols" },
-      { title: "Sub-Contracting Workflow", blurb: "Process to engage and manage subcontracting partners from due diligence to oversight.", href: "docs/Sub-Contracting Workflow.docx", tag: "Workflows", category: "Workflows" },
-      { title: "Suitability Assessment", blurb: "Readiness assessment tool for housing evaluation.", href: "docs/Suitability_Assessment.docx", tag: "Assessments", category: "Assessments" },
-      { title: "Supervisor Job Description", blurb: "Clinical supervision, team leadership, QA, stakeholder coordination.", href: "docs/Supervisor Job Description.docx", tag: "Roles", category: "Roles" }
-    $2
+  <script>
+    // ---------- DATA (exact filenames in /docs/) ----------
+    const DOCS = [
+      { title:"24/7 Hotline SOP (Landlords & Participants)", blurb:"Always-available contact pathway; triage, escalation, documentation, follow-up.", href:"docs/24x7_Hotline_SOP.docx", tag:"Protocols", category:"Protocols" },
+      { title:"72 Hour Move In protocol", blurb:"72-hr orientation for tenant/landlord; move-in kit; stabilization.", href:"docs/72 Hour Move In protocol.docx", tag:"Protocols", category:"Protocols" },
+      { title:"Administrator Job Description", blurb:"Operations, compliance, reporting, staff leadership.", href:"docs/Administrator Job Description.docx", tag:"Roles", category:"Roles" },
+      { title:"Agency Flyer", blurb:"One-page outreach for agencies.", href:"docs/Agency Flyer.pdf", tag:"Partnerships", category:"Partnerships" },
+      { title:"Bridge Housing – Partner Info Sheet", blurb:"Expectations, limits, check-ins, incident response.", href:"docs/Bridge_Housing_Partner_Info_Sheet.docx", tag:"Partnerships", category:"Partnerships" },
+      { title:"Bridge Housing – Referral Form", blurb:"Internal referral capture for bridge housing.", href:"docs/Bridge_Housing_Referral_Form.docx", tag:"Workflows", category:"Workflows" },
+      { title:"Case Manager Job Description", blurb:"Core duties & competencies.", href:"docs/Case Manager Job Description.docx", tag:"Roles", category:"Roles" },
+      { title:"Client Referral Workflow", blurb:"End-to-end referral from IDOC to placement.", href:"docs/Client Referral Workflow.docx", tag:"Workflows", category:"Workflows" },
+      { title:"Data Coordinator Job Description", blurb:"Data entry, QA, reporting.", href:"docs/Data Coordinator Job Description.docx", tag:"Roles", category:"Roles" },
+      { title:"Driver Job Description", blurb:"Transport, safety, logs.", href:"docs/Driver Job Description.docx", tag:"Roles", category:"Roles" },
+      { title:"Frequently Asked Questions", blurb:"Common questions & answers.", href:"docs/Frequently Asked Questions.docx", tag:"Overview", category:"Overview" },
+      { title:"Housing Eligibility Screening and Intake & Readiness", blurb:"Comprehensive screening tool.", href:"docs/Housing Eligibility Screening and Intake & Readiness.docx", tag:"Assessments", category:"Assessments" },
+      { title:"Housing Match Workflow", blurb:"Matching process & restrictions.", href:"docs/Housing Match Workflow.docx", tag:"Workflows", category:"Workflows" },
+      { title:"Housing Provider Directory", blurb:"Provider contacts and service areas.", href:"docs/Housing Provider Directory.xlsx", tag:"Overview", category:"Overview" },
+      { title:"Implementation Plan", blurb:"Phased plan & milestones.", href:"docs/Implementation Plan.docx", tag:"Overview", category:"Overview" },
+      { title:"Incident Triage Decision Tree", blurb:"Safety triage and escalation.", href:"docs/Incident Triage Decision Tree.docx", tag:"Protocols", category:"Protocols" },
+      { title:"Internal Bridge Housing Protocol", blurb:"Bridge housing guidance.", href:"docs/Internal_Bridge_Housing_Protocol.docx", tag:"Protocols", category:"Protocols" },
+      { title:"KPIs with Recommend Tracking", blurb:"KPIs for placement, services, stability.", href:"docs/KPIs_with_Recommend Tracking.docx", tag:"Overview", category:"Overview" },
+      { title:"Landlord Flyer", blurb:"Why partner & how to enroll.", href:"docs/Landlord Flyer.pdf", tag:"Partnerships", category:"Partnerships" },
+      { title:"Landlord Overview Deck", blurb:"Program, supports, incentives.", href:"docs/Landlord Overview Deck.pdf", tag:"Partnerships", category:"Partnerships" },
+      { title:"Landlord Incentive Proposal", blurb:"Bonuses, mitigation fund, fees.", href:"docs/Landlord_Incentive_Proposal.docx", tag:"Partnerships", category:"Partnerships" },
+      { title:"Landlord Invoice and Process", blurb:"Monthly invoice template & workflow.", href:"docs/Landlord_Invoice_and_Process.docx", tag:"Partnerships", category:"Partnerships" },
+      { title:"Landlord Orientation Packet", blurb:"Onboarding packet.", href:"docs/Landlord_Orientation_Packet.docx", tag:"Partnerships", category:"Partnerships" },
+      { title:"Lease Violation / Incident Form", blurb:"Incident/violation report.", href:"docs/Lease_Violation_Incident_Form.docx", tag:"Protocols", category:"Protocols" },
+      { title:"Move-In Checklist", blurb:"Move-in kit checklist.", href:"docs/Move-In Checklist.docx", tag:"Protocols", category:"Protocols" },
+      { title:"Network Housing Developer Job Description", blurb:"Landlord outreach & pipeline.", href:"docs/Network Housing Developer Job Description.docx", tag:"Roles", category:"Roles" },
+      { title:"Opportunity Notice", blurb:"Program overview & counties.", href:"docs/Opportunity Notice.docx", tag:"Overview", category:"Overview" },
+      { title:"Peer Support Specialist Job Description", blurb:"Peer role supporting recovery.", href:"docs/Peer Support Specialist Job Description.docx", tag:"Roles", category:"Roles" },
+      { title:"Pilot Program Staffing Model", blurb:"60-participant staffing mix.", href:"docs/Pilot Program Staffing Model.docx", tag:"Overview", category:"Overview" },
+      { title:"Pre & Post Release Placement Timeline", blurb:"Milestones pre/post release.", href:"docs/Pre_Post_Release_Placement_Timeline.docx", tag:"Workflows", category:"Workflows" },
+      { title:"Recommendations", blurb:"Program enablement recommendations.", href:"docs/Recommendations.docx", tag:"Overview", category:"Overview" },
+      { title:"Roles and Responsibilities", blurb:"Duties by role.", href:"docs/Roles and Responsibilities.docx", tag:"Roles", category:"Roles" },
+      { title:"Service Provider Directory", blurb:"Service provider contacts.", href:"docs/Service_Provider.xlsx", tag:"Overview", category:"Overview" },
+      { title:"Stabilization and Ongoing Supports SOP", blurb:"Post-move-in cadence & escalation.", href:"docs/Stabilization and Ongoing Supports SOP.docx", tag:"Protocols", category:"Protocols" },
+      { title:"Sub-Contracting Workflow", blurb:"Subcontractor process.", href:"docs/Sub-Contracting Workflow.docx", tag:"Workflows", category:"Workflows" },
+      { title:"Suitability Assessment", blurb:"Readiness assessment tool.", href:"docs/Suitability_Assessment.docx", tag:"Assessments", category:"Assessments" },
+      { title:"Supervisor Job Description", blurb:"Clinical supervision & QA.", href:"docs/Supervisor Job Description.docx", tag:"Roles", category:"Roles" }
+    ];
 
-    // ======= STATE =======
-    let state = { q: "", category: "All Documents" };
+    // ---------- AUTO SUMMARY ----------
+    function autoSummary(d){
+      const t = (d.title||"").toLowerCase();
+      const has = k => t.includes(k);
+      const bits = [];
+      const audience = [];
+      if (has("job description")) bits.push("Key responsibilities, qualifications, and competencies.");
+      if (has("workflow")) bits.push("Step-by-step process with inputs/outputs and handoffs.");
+      if (has("protocol") || has("sop")) bits.push("Standard operating procedures and escalation paths.");
+      if (has("assessment")) bits.push("Screening criteria and scoring guidance.");
+      if (has("form")) bits.push("Required fields and submission instructions.");
+      if (has("checklist")) bits.push("Required items and confirmations.");
+      if (has("timeline")) bits.push("Milestones and target dates.");
+      if (has("proposal")) bits.push("Incentives, eligibility, and terms.");
+      if (has("flyer") || has("deck")) bits.push("Outreach overview and how to engage.");
+      if (has("directory")) bits.push("Reference list with contacts and service areas.");
+      if (has("invoice")) bits.push("Billing steps and payment cycles.");
+      if (has("orientation")) bits.push("Onboarding expectations and resources.");
+      if (has("decision tree")) bits.push("Branching guidance for triage and next actions.");
+      if (has("landlord")) audience.push("landlords");
+      if (has("bridge housing")) audience.push("bridge housing partners");
+      if (has("client") || has("participant")) audience.push("participants/clients");
+      if (has("case manager")) audience.push("case managers");
+      if (has("peer support")) audience.push("peer support specialists");
+      if (has("network housing developer")) audience.push("NHDs");
+      if (has("data coordinator")) audience.push("data coordinators");
+      if (has("administrator")) audience.push("administrators");
+      if (has("supervisor")) audience.push("supervisors");
+      if (has("driver")) audience.push("drivers");
+      const base = (d.blurb || `Overview of ${d.title}.`).trim();
+      const tail = `${audience.length ? ` Intended for ${audience.join(", ")}.` : ""} ${bits.join(" ")}`.trim();
+      return `${base}${tail ? " " + tail : ""}`;
+    }
 
+    // ---------- STATE/UI ----------
+    let state = { q:"", category:"All Documents" };
     const categories = [
-      { name: "All Documents" },
-      { name: "Assessments" },
-      { name: "Overview" },
-      { name: "Partnerships" },
-      { name: "Protocols" },
-      { name: "Roles" },
-      { name: "Workflows" },
+      { name:"All Documents" }, { name:"Assessments" }, { name:"Overview" },
+      { name:"Partnerships" }, { name:"Protocols" }, { name:"Roles" }, { name:"Workflows" },
     ];
 
     function countByCategory(){
       const counts = Object.create(null);
-      for(const c of categories){ counts[c.name] = 0; }
-      for(const d of DOCS){
-        counts[d.category] = (counts[d.category]||0) + 1;
-        counts["All Documents"] = (counts["All Documents"]||0) + 1;
+      for (const c of categories) counts[c.name]=0;
+      for (const d of DOCS){
+        counts[d.category] = (counts[d.category]||0)+1;
+        counts["All Documents"] = (counts["All Documents"]||0)+1;
       }
       return counts;
     }
 
-    function pill(label){
-      return `<span class="badge inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-slate-700">${label}</span>`;
-    }
+    const pill = (label) =>
+      `<span class="badge inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-slate-700">${label}</span>`;
 
     function renderFilters(){
       const holder = document.getElementById('filters');
@@ -182,12 +211,26 @@
           <span class="text-xs opacity-70">${counts[cat.name]||0}</span>
         </button>`;
       }).join('');
-
       holder.querySelectorAll('button').forEach(btn => btn.addEventListener('click', e => {
         state.category = e.currentTarget.dataset.cat;
-        renderFilters();
-        renderCards();
+        renderFilters(); renderCards();
       }));
+    }
+
+    function openDrawer(d){
+      document.getElementById('drawerTitle').textContent = d.title;
+      document.getElementById('drawerBlurb').textContent = (d.summary || autoSummary(d));
+      const fileName = d.href.split('/').pop();
+      document.getElementById('drawerView').setAttribute('href', encodeURI(d.href));
+      const dl = document.getElementById('drawerDownload');
+      dl.setAttribute('href', encodeURI(d.href));
+      dl.setAttribute('download', fileName);
+      document.getElementById('drawer').style.transform = 'translateX(0)';
+      document.getElementById('drawerBackdrop').classList.remove('hidden');
+    }
+    function closeDrawer(){
+      document.getElementById('drawer').style.transform = 'translateX(100%)';
+      document.getElementById('drawerBackdrop').classList.add('hidden');
     }
 
     function renderCards(){
@@ -195,133 +238,19 @@
       const q = state.q.toLowerCase();
       const filtered = DOCS.filter(d => {
         const inCat = state.category === 'All Documents' || d.category === state.category;
-        const inSearch = !q || d.title.toLowerCase().includes(q) || d.blurb.toLowerCase().includes(q);
-        return inCat && inSearch;
-      });
-
-      grid.innerHTML = filtered.map((d, i) => {
-        const fileName = d.href.split('/').pop();
-        return `
-        <div class="card rounded-2xl border border-slate-200 p-5 transition shadow-sm bg-white cursor-pointer" data-idx="${i}">
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <div class="h-10 w-10 grid place-items-center rounded-xl bg-rose-50 text-rose-600 border border-rose-100">
-                <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5\"/></svg>
-              </div>
-              <div>
-                <div class="font-semibold leading-snug hover:underline">${d.title}</div>
-                <div class="mt-1">${pill(d.tag)}</div>
-              </div>
-            </div>
-            <a href="${encodeURI(d.href)}" download="${fileName}" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium" title="Download" onclick="event.stopPropagation()">
-              <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 3v12m0 0 4-4m-4 4-4-4M4 21h16\"/></svg>
-              Download
-            </a>
-          </div>
-          <p class="mt-3 text-sm text-slate-600 truncate-2">${d.blurb}</p>
-        </div>`;
-      }).join('');
-
-      // attach click to open drawer
-      grid.querySelectorAll('.card').forEach(el => {
-        el.addEventListener('click', () => {
-          const idx = +el.getAttribute('data-idx');
-          const d = filtered[idx];
-          openDrawer(d);
-        });
-      });
-
-      document.getElementById('docCount').textContent = DOCS.length;
-    }
-
-    function openDrawer(d){
-      const drawer = document.getElementById('drawer');
-      const backdrop = document.getElementById('drawerBackdrop');
-      document.getElementById('drawerTitle').textContent = d.title;
-      document.getElementById('drawerBlurb').textContent = d.blurb;
-      document.getElementById('drawerView').setAttribute('href', encodeURI(d.href));
-      const fileName = d.href.split('/').pop();
-      const dl = document.getElementById('drawerDownload');
-      dl.setAttribute('href', encodeURI(d.href));
-      dl.setAttribute('download', fileName);
-      drawer.style.transform = 'translateX(0)';
-      backdrop.classList.remove('hidden');
-    }
-
-    function closeDrawer(){
-      const drawer = document.getElementById('drawer');
-      const backdrop = document.getElementById('drawerBackdrop');
-      drawer.style.transform = 'translateX(100%)';
-      backdrop.classList.add('hidden');
-    }
-
-    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
-    document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
-
-    document.getElementById('searchInput').addEventListener('input', (e)=>{
-      state.q = e.target.value;
-      renderCards();
-    });
-
-    // init
-    renderFilters();
-    renderCards();
-      // === Auto-summary generator (uses title keywords + blurb) ===
-    function generateSummary(d){
-      const t = (d.title || '').toLowerCase();
-      const bits = [];
-      const audience = [];
-      const has = (k)=> t.includes(k);
-      if (has('job description')) bits.push('Key responsibilities, qualifications, and core competencies.');
-      if (has('workflow')) bits.push('Step-by-step process, required inputs/outputs, and handoffs.');
-      if (has('protocol') || has('sop')) bits.push('Standard operating procedures, roles, and escalation paths.');
-      if (has('assessment')) bits.push('Screening criteria, scoring guidance, and decision rules.');
-      if (has('form')) bits.push('Required fields, documentation, and submission instructions.');
-      if (has('checklist')) bits.push('Checklist of required items and confirmations.');
-      if (has('timeline')) bits.push('Milestones and target dates before/after key events.');
-      if (has('proposal')) bits.push('Incentives, eligibility, payment terms, and conditions.');
-      if (has('flyer') || has('deck')) bits.push('Outreach overview, benefits, and how to engage.');
-      if (has('directory')) bits.push('Reference list with contacts and service areas.');
-      if (has('invoice')) bits.push('Billing steps, documentation required, and payment cycles.');
-      if (has('orientation')) bits.push('Onboarding expectations, forms, and resources.');
-      if (has('decision tree')) bits.push('Branching guidance for triage and next actions.');
-
-      if (has('landlord')) audience.push('landlords');
-      if (has('bridge housing')) audience.push('bridge housing partners');
-      if (has('client') || has('participant')) audience.push('participants/clients');
-      if (has('case manager')) audience.push('case managers');
-      if (has('peer support')) audience.push('peer support specialists');
-      if (has('network housing developer')) audience.push('NHDs');
-      if (has('data coordinator')) audience.push('data coordinators');
-      if (has('administrator')) audience.push('administrators');
-      if (has('supervisor')) audience.push('supervisors');
-      if (has('driver')) audience.push('drivers');
-
-      const base = (d.blurb || `Overview of ${d.title}.`).trim();
-      const tail = `${audience.length ? ` Intended for ${audience.join(', ')}.` : ''} ${bits.join(' ')}`.trim();
-      return (d.summary || `${base}${tail ? ' ' + tail : ''}`).trim();
-    }
-
-    // === Enhance search: title + blurb + (auto)summary ===
-    const originalRenderCards = renderCards;
-    renderCards = function(){
-      const grid = document.getElementById('cardsGrid');
-      const q = state.q.toLowerCase();
-      const filtered = DOCS.filter(d => {
-        const inCat = state.category === 'All Documents' || d.category === state.category;
-        const hay = (d.title + ' ' + (d.blurb||'') + ' ' + generateSummary(d)).toLowerCase();
+        const hay = (d.title + " " + d.blurb + " " + (d.summary || autoSummary(d))).toLowerCase();
         const inSearch = !q || hay.includes(q);
         return inCat && inSearch;
       });
 
-      grid.innerHTML = filtered.map((d, i) => {
+      grid.innerHTML = filtered.map((d,i) => {
         const fileName = d.href.split('/').pop();
         return `
         <div class="card rounded-2xl border border-slate-200 p-5 transition shadow-sm bg-white cursor-pointer" data-idx="${i}">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3">
               <div class="h-10 w-10 grid place-items-center rounded-xl bg-rose-50 text-rose-600 border border-rose-100">
-                <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5\"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5"/></svg>
               </div>
               <div>
                 <div class="font-semibold leading-snug hover:underline">${d.title}</div>
@@ -329,7 +258,7 @@
               </div>
             </div>
             <a href="${encodeURI(d.href)}" download="${fileName}" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700 px-3 py-1.5 text-xs font-medium" title="Download" onclick="event.stopPropagation()">
-              <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 3v12m0 0 4-4m-4 4-4-4M4 21h16\"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
               Download
             </a>
           </div>
@@ -342,36 +271,26 @@
       });
 
       document.getElementById('docCount').textContent = DOCS.length;
-    };
+    }
 
-    // Use auto-summary in the drawer too
-    const originalOpenDrawer = openDrawer;
-    openDrawer = function(d){
-      const drawer = document.getElementById('drawer');
-      const backdrop = document.getElementById('drawerBackdrop');
-      document.getElementById('drawerTitle').textContent = d.title;
-      document.getElementById('drawerBlurb').textContent = generateSummary(d);
-      document.getElementById('drawerView').setAttribute('href', encodeURI(d.href));
-      const fileName = d.href.split('/').pop();
-      const dl = document.getElementById('drawerDownload');
-      dl.setAttribute('href', encodeURI(d.href));
-      dl.setAttribute('download', fileName);
-      drawer.style.transform = 'translateX(0)';
-      backdrop.classList.remove('hidden');
-    };
+    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+    document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
+    document.getElementById('searchInput').addEventListener('input', (e)=>{ state.q = e.target.value; renderCards(); });
 
-    // Optional: load richer summaries if you add /summaries/<filename>.txt
+    // Optional: load richer summaries from /summaries/<exact file name>.txt
     async function loadExternalSummaries(){
       await Promise.all(DOCS.map(async d => {
         try {
           const name = d.href.split('/').pop();
           const res = await fetch(encodeURI('summaries/' + name + '.txt'));
           if (res.ok) d.summary = await res.text();
-        } catch(_){}
+        } catch(_) {}
       }));
     }
 
-    (async ()=>{ await loadExternalSummaries(); renderFilters(); renderCards(); })();
+    // init
+    renderFilters();
+    (async ()=>{ await loadExternalSummaries(); renderCards(); })();
   </script>
 </body>
 </html>

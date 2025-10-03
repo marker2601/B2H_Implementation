@@ -638,125 +638,122 @@
     // -------------------------
     // Events
     // -------------------------
+    // Events
+    // -------------------------
     document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
     document.getElementById("sortSel").addEventListener("change", (e)=>{ state.sort = e.target.value; renderCards(); });
 
-    <script>
-  // ------- Transcript loader: fetch .vtt, parse to plain text with clickable timestamps
-  async function loadVTT(url){
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('Transcript not found');
-    const text = await res.text();
+    // ------- Transcript loader: fetch .vtt, parse to plain text with clickable timestamps
+    async function loadVTT(url){
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('Transcript not found');
+      const text = await res.text();
 
-    // Simple WebVTT cue parser (start --> end \n text)
-    const lines = text.split(/\r?\n/);
-    const cues = [];
-    let i=0;
-    while(i<lines.length){
-      const line = lines[i].trim();
-      if(/^\d+$/.test(line)) { i++; continue; }            // ignore numeric cue id
-      if(line.includes('-->')) {
-        const m = line.match(/(\d+):?(\d{2}):(\d{2})\.(\d{3})/); // first timestamp
-        let startSec = 0;
-        if(m){
-          const h = m[1].length===2 ? parseInt(m[1],10) : 0;
-          const mm = parseInt(m[2],10), ss=parseInt(m[3],10), ms=parseInt(m[4],10);
-          startSec = h*3600 + mm*60 + ss + ms/1000;
+      const lines = text.split(/\r?\n/);
+      const cues = [];
+      let i=0;
+      while(i<lines.length){
+        const line = lines[i].trim();
+        if(/^\d+$/.test(line)) { i++; continue; }
+        if(line.includes('-->')) {
+          const m = line.match(/(\d+):?(\d{2}):(\d{2})\.(\d{3})/);
+          let startSec = 0;
+          if(m){
+            const h = m[1].length===2 ? parseInt(m[1],10) : 0;
+            const mm = parseInt(m[2],10), ss=parseInt(m[3],10), ms=parseInt(m[4],10);
+            startSec = h*3600 + mm*60 + ss + ms/1000;
+          }
+          i++;
+          let txt=[];
+          while(i<lines.length && lines[i].trim()!==""){
+            txt.push(lines[i]);
+            i++;
+          }
+          const cueText = txt.join(' ').replace(/\s+/g,' ').trim();
+          if(cueText) cues.push({t:startSec, text:cueText});
         }
         i++;
-        let txt=[];
-        while(i<lines.length && lines[i].trim()!==""){
-          txt.push(lines[i]);
-          i++;
-        }
-        const cueText = txt.join(' ').replace(/\s+/g,' ').trim();
-        if(cueText) cues.push({t:startSec, text:cueText});
       }
-      i++;
+      return cues;
     }
-    return cues;
-  }
 
-  // ------- Render transcript with search + jump-to-time
-  function renderTranscript(cues, filter=""){
-    const wrap = document.getElementById('transcript');
-    const needle = filter.trim().toLowerCase();
-    wrap.innerHTML = cues.map(({t,text})=>{
-      let shown = text;
-      if(needle){
-        shown = shown.replace(new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), m=>`<mark>${m}</mark>`);
-      }
-      const hh = Math.floor(t/3600), mm=Math.floor((t%3600)/60), ss=Math.floor(t%60);
-      const stamp = (hh>0? String(hh).padStart(2,'0')+':':'') + String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
-      return `<div class="py-1.5">
-        <button class="text-xs text-rose-700 hover:underline" data-jump="${t}">[${stamp}]</button>
-        <span class="ml-2">${shown}</span>
-      </div>`;
-    }).join('');
-
-    // click-to-seek
-    wrap.querySelectorAll('button[data-jump]').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        const v = document.getElementById('budgetVideo');
-        v.currentTime = parseFloat(b.dataset.jump||"0");
-        v.play().catch(()=>{});
-      });
-    });
-  }
-
-  // ------- Wire up UI
-  (function wireBudgetBundle(){
-    const btnT = document.getElementById('btnTranscript');
-    const wrap = document.getElementById('transcriptWrap');
-    const trInput = document.getElementById('trSearch');
-    const jumpExcel = document.getElementById('btnJumpToExcel');
-    let cuesCache = null;
-    let visible = false;
-
-    btnT?.addEventListener('click', async ()=>{
-      visible = !visible;
-      wrap.classList.toggle('hidden', !visible);
-      btnT.innerHTML = visible
-        ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg> Hide Transcript`
-        : `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg> Show Transcript`;
-      if(visible && !cuesCache){
-        try {
-          cuesCache = await loadVTT('assets/media/GMT20251003-130246_Recording.transcript.vtt');
-          renderTranscript(cuesCache);
-        } catch(e){
-          document.getElementById('transcript').innerHTML = `<div class="text-sm text-slate-500">Transcript not found.</div>`;
+    // ------- Render transcript with search + jump-to-time
+    function renderTranscript(cues, filter=""){
+      const wrap = document.getElementById('transcript');
+      const needle = filter.trim().toLowerCase();
+      wrap.innerHTML = cues.map(({t,text})=>{
+        let shown = text;
+        if(needle){
+          shown = shown.replace(new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), m=>`<mark>${m}</mark>`);
         }
-      }
-    });
+        const hh = Math.floor(t/3600), mm=Math.floor((t%3600)/60), ss=Math.floor(t%60);
+        const stamp = (hh>0? String(hh).padStart(2,'0')+':':'') + String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+        return `<div class="py-1.5">
+          <button class="text-xs text-rose-700 hover:underline" data-jump="${t}">[${stamp}]</button>
+          <span class="ml-2">${shown}</span>
+        </div>`;
+      }).join('');
 
-    trInput?.addEventListener('input', (e)=>{
-      if(cuesCache) renderTranscript(cuesCache, e.target.value);
-    });
+      wrap.querySelectorAll('button[data-jump]').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          const v = document.getElementById('budgetVideo');
+          v.currentTime = parseFloat(b.dataset.jump||"0");
+          v.play().catch(()=>{});
+        });
+      });
+    }
 
-    // Optional convenience: jump to Excel segment if the transcript contains “excel” or “calculator”
-    jumpExcel?.addEventListener('click', ()=>{
-      const v = document.getElementById('budgetVideo');
-      if(!cuesCache) return;
-      const hit = cuesCache.find(c => /excel|calculator|spreadsheet/i.test(c.text));
-      if(hit){
-        v.currentTime = hit.t; v.play().catch(()=>{});
-        if(!visible){ btnT.click(); } // open transcript for context
-        trInput.value = "excel"; renderTranscript(cuesCache, "excel");
-      }
-    });
-  })();
+    // ------- Wire up Budget bundle
+    (function wireBudgetBundle(){
+      const btnT = document.getElementById('btnTranscript');
+      const wrap = document.getElementById('transcriptWrap');
+      const trInput = document.getElementById('trSearch');
+      const jumpExcel = document.getElementById('btnJumpToExcel');
+      let cuesCache = null;
+      let visible = false;
 
+      btnT?.addEventListener('click', async ()=>{
+        visible = !visible;
+        wrap.classList.toggle('hidden', !visible);
+        btnT.innerHTML = visible
+          ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg> Hide Transcript`
+          : `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg> Show Transcript`;
+        if(visible && !cuesCache){
+          try {
+            cuesCache = await loadVTT('assets/media/GMT20251003-130246_Recording.transcript.vtt');
+            renderTranscript(cuesCache);
+          } catch(e){
+            document.getElementById('transcript').innerHTML = `<div class="text-sm text-slate-500">Transcript not found.</div>`;
+          }
+        }
+      });
 
+      trInput?.addEventListener('input', (e)=>{
+        if(cuesCache) renderTranscript(cuesCache, e.target.value);
+      });
+
+      jumpExcel?.addEventListener('click', ()=>{
+        const v = document.getElementById('budgetVideo');
+        if(!cuesCache) return;
+        const hit = cuesCache.find(c => /excel|calculator|spreadsheet/i.test(c.text));
+        if(hit){
+          v.currentTime = hit.t; v.play().catch(()=>{});
+          if(!visible){ btnT.click(); }
+          trInput.value = "excel"; renderTranscript(cuesCache, "excel");
+        }
+      });
+    })();
 
     // -------------------------
     // Init
     // -------------------------
     (async function init(){
       renderFilters();
-      await loadExternalSummaries(); // supports /summaries/<filename>.txt overrides
+      await loadExternalSummaries();
       renderCards();
       renderAcrList();
     })();
+
   </script>
 </body>
 </html>

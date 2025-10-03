@@ -11,11 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
-    :root {
-      --brand:#C2185B; --brandDark:#9B1349; --ink:#0F172A; --pill:#F1F5F9;
-      --slate:#64748B; --line:#E2E8F0; --card:#FFFFFF;
-    }
-    /* Header gradient + subtle light flares */
+    :root { --brand:#C2185B; --brandDark:#9B1349; --ink:#0F172A; --pill:#F1F5F9; --slate:#64748B; --line:#E2E8F0; --card:#FFFFFF; }
+    /* Header gradient + subtle flares */
     .brand-gradient {
       background:
         radial-gradient(1200px 300px at 15% -10%, rgba(255,255,255,.18), transparent 60%),
@@ -42,26 +39,20 @@
     .btn-chip { border:1px solid #E5E7EB; background:#FFFFFF; }
     .btn-chip.active { background:#0F172A; color:white; border-color:#0F172A; }
     .drawer-open { transform: translateX(0) !important; }
-    /* Acronyms floating button */
+    /* Floating buttons stack */
     .fab { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
     .fab > button { box-shadow: 0 10px 24px rgba(15,23,42,.2); }
-    /* Acronyms overlay */
+    /* Slide-in overlays */
     .overlay { transform: translateX(105%); }
     .overlay-open { transform: translateX(0) !important; }
-    .pin-card { background: #fff; border:1px solid #E2E8F0; border-radius: 18px; }
-    .pin-card h2 { letter-spacing: -0.01em; }
-    .pin-badge { display:inline-flex; align-items:center; gap:.5rem; font-size:.75rem; font-weight:700; color:#0F172A; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:999px; padding:.25rem .6rem; }
+    /* Transcript styling (shared) */
     .transcript { max-height: 320px; overflow: auto; border:1px solid #E5E7EB; border-radius: 12px; padding:.75rem; }
     .transcript mark { background: #FEF3C7; }
-    .video-shell video { border-radius: 12px; }
-    
-
-    
   </style>
 </head>
 <body class="bg-white text-slate-800 selection:bg-rose-100 selection:text-rose-900">
 
-  <!-- Header -->
+  <!-- Header (clean; no top-right buttons) -->
   <header class="brand-gradient text-white sticky-h">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
       <div class="flex items-center justify-start gap-4">
@@ -102,92 +93,6 @@
       </div>
     </div>
   </header>
-<!-- Pinned: Budget Helper bundle -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-  <div class="pin-card p-5 sm:p-6">
-    <div class="flex items-start justify-between gap-4 flex-wrap">
-      <div class="flex items-center gap-2">
-        <span class="pin-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 17-3 3-3-3M12 3v17"/></svg>
-          Pinned
-        </span>
-        <h2 class="text-xl sm:text-2xl font-extrabold">Budget Helper</h2>
-      </div>
-      <div class="text-xs text-slate-500">Video • Excel • Year-1 Budget doc • Transcript</div>
-    </div>
-
-    <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-5">
-      <!-- Left: Video (top priority) -->
-      <div class="lg:col-span-2 video-shell">
-        <video id="budgetVideo" controls preload="metadata" class="w-full aspect-video bg-black"
-               src="assets/media/Budget calculator.mp4">
-          Sorry—your browser can’t play this video.
-        </video>
-        <div class="mt-3 flex flex-wrap gap-2">
-          <button id="btnTranscript" class="btn btn-ghost">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg>
-            Show Transcript
-          </button>
-          <button id="btnJumpToExcel" class="btn btn-primary">
-            Jump to Excel Tips in Transcript
-          </button>
-        </div>
-        <div id="transcriptWrap" class="mt-3 hidden">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="font-semibold">Transcript</h3>
-            <input id="trSearch" type="text" placeholder="Find in transcript…" class="rounded-lg border border-slate-300 px-2 py-1 text-sm">
-          </div>
-          <div id="transcript" class="transcript text-sm text-slate-700"></div>
-        </div>
-      </div>
-
-      <!-- Right: Files (Excel first) -->
-      <div class="lg:col-span-1">
-        <div class="rounded-2xl border border-slate-200 p-4 bg-white">
-          <h4 class="text-sm font-semibold text-slate-700">Downloads</h4>
-          <div class="mt-3 space-y-3">
-            <!-- Excel on top -->
-            <a href="docs/Client_Budget_Calculator_v2.xlsx" class="w-full btn btn-primary justify-between" download>
-              <span class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8v8M8 8v8M4 12h16"/></svg>
-                Client Budget Calculator (Excel)
-              </span>
-              <span class="text-xs opacity-80">.xlsx</span>
-            </a>
-
-            <!-- Budget doc -->
-            <a href="docs/Draft Year one Budget.docx" class="w-full btn btn-ghost justify-between" download>
-              <span class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
-                Draft Year-1 Budget (Doc)
-              </span>
-              <span class="text-xs opacity-80">.docx</span>
-            </a>
-
-            <!-- Optional: open the Excel in the browser if user has handlers -->
-            <a href="docs/Client_Budget_Calculator_v2.xlsx" class="w-full btn btn-ghost justify-between">
-              <span class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
-                View in browser (if supported)
-              </span>
-            </a>
-          </div>
-
-          <hr class="my-4">
-          <div class="text-xs text-slate-600 leading-relaxed">
-            <strong>What’s inside:</strong>
-            <ul class="list-disc ml-4 mt-1 space-y-1">
-              <li><em>Video</em>: walkthrough of the budget logic & calculator.</li>
-              <li><em>Excel</em>: client-level calculator with editable inputs.</li>
-              <li><em>Doc</em>: Year-1 budget narrative & categories.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
 
   <!-- Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -256,15 +161,19 @@
     </div>
   </footer>
 
-  <!-- Floating Acronyms Button -->
-  <div class="fab">
+  <!-- Floating buttons: Acronyms + Year-1 Budget -->
+  <div class="fab flex flex-col gap-2">
     <button id="openAcronyms"
             class="rounded-full bg-white text-slate-900 border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
       Acronyms
     </button>
+    <button id="openBudget"
+            class="rounded-full bg-white text-slate-900 border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+      Year-1 Budget
+    </button>
   </div>
 
-  <!-- Acronyms Overlay (slides in from right) -->
+  <!-- Acronyms Overlay -->
   <aside id="acronymsPanel" class="overlay fixed inset-y-0 right-0 w-full max-w-xl bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 z-[70]">
     <div class="h-full flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b">
@@ -292,9 +201,56 @@
   </aside>
   <div id="acronymsBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[65] hidden"></div>
 
+  <!-- Year-1 Budget Overlay -->
+  <aside id="budgetPanel" class="overlay fixed inset-y-0 right-0 w-full max-w-2xl bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 z-[70]">
+    <div class="h-full flex flex-col">
+      <div class="flex items-center justify-between px-5 py-4 border-b">
+        <div>
+          <h3 class="text-lg font-semibold">Year-1 Budget Helper</h3>
+          <p class="text-xs text-slate-500">Video • Excel • Budget doc • Transcript</p>
+        </div>
+        <button id="closeBudget" class="rounded-lg px-2 py-1 hover:bg-slate-100" aria-label="Close budget panel">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-4 overflow-y-auto">
+        <!-- Video -->
+        <video id="budgetVideo" controls preload="metadata" class="w-full aspect-video bg-black rounded-xl"
+               src="assets/media/Budget%20calculator.mp4">
+          Sorry—your browser can’t play this video.
+        </video>
+        <!-- Downloads -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <a href="docs/Client_Budget_Calculator_v2.xlsx" download class="btn btn-primary justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8v8M8 8v8M4 12h16"/></svg>
+            Download Client Budget Calculator (.xlsx)
+          </a>
+          <a href="docs/Draft Year one Budget.docx" download class="btn btn-ghost justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
+            Download Year-1 Budget (.docx)
+          </a>
+        </div>
+        <!-- Transcript -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-semibold">Transcript</h4>
+            <div class="flex items-center gap-2">
+              <input id="trSearch" type="text" placeholder="Find in transcript…" class="rounded-lg border border-slate-300 px-2 py-1 text-sm">
+              <button id="btnJumpToExcel" class="btn btn-ghost text-sm">Jump to Excel tips</button>
+            </div>
+          </div>
+          <div id="transcript" class="transcript text-sm text-slate-700">
+            <div class="text-sm text-slate-500">Loading transcript…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div id="budgetBackdrop" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[65] hidden"></div>
+
   <script>
     // -------------------------
-    // DATA: Library (unchanged – your docs)
+    // DATA: Library (cards)
     // -------------------------
     const DOCS = [
       { title:"24/7 Hotline SOP (Landlords & Participants)", blurb:"Always-available contact pathway; triage, escalation, documentation, follow-up.", href:"docs/24x7_Hotline_SOP.docx", tag:"Protocols", category:"Protocols",
@@ -388,7 +344,7 @@
     ];
 
     // -------------------------
-    // DATA: Acronyms & Terms (searchable in overlay)
+    // DATA: Acronyms
     // -------------------------
     const ACRONYMS = [
       ["ACH","Automated Clearing House (electronic bank transfer for payments)"],
@@ -498,7 +454,7 @@
     }
 
     // -------------------------
-    // External summaries overrides: /summaries/<filename>.txt
+    // Optional external summaries: /summaries/<filename>.txt
     // -------------------------
     async function loadExternalSummaries(){
       await Promise.all(DOCS.map(async d => {
@@ -521,11 +477,11 @@
       if (s === "az") return [...arr].sort((a,b)=>a.title.localeCompare(b.title));
       if (s === "za") return [...arr].sort((a,b)=>b.title.localeCompare(a.title));
       if (s === "category") return [...arr].sort((a,b)=> (a.category.localeCompare(b.category)) || a.title.localeCompare(b.title));
-      return arr; // relevance = keep filtered order
+      return arr; // relevance
     }
 
     // -------------------------
-    // Drawer
+    // Drawer (document details)
     // -------------------------
     function openDrawer(d){
       document.getElementById("drawerTitle").textContent = d.title;
@@ -606,10 +562,7 @@
       acrBackdrop.classList.remove('hidden');
       document.getElementById('acrSearch').focus();
     });
-    function closeAcr(){
-      acrPanel.classList.remove('overlay-open');
-      acrBackdrop.classList.add('hidden');
-    }
+    function closeAcr(){ acrPanel.classList.remove('overlay-open'); acrBackdrop.classList.add('hidden'); }
     document.getElementById('closeAcronyms').addEventListener('click', closeAcr);
     acrBackdrop.addEventListener('click', closeAcr);
 
@@ -621,12 +574,8 @@
         .sort((a,b)=> a[0].localeCompare(b[0]));
       list.innerHTML = items.map(([k,v]) => `
         <li class="px-5 py-3">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <div class="text-sm font-semibold text-slate-800">${k}</div>
-              <div class="text-sm text-slate-600">${v}</div>
-            </div>
-          </div>
+          <div class="text-sm font-semibold text-slate-800">${k}</div>
+          <div class="text-sm text-slate-600">${v}</div>
         </li>
       `).join('');
       if (!items.length){
@@ -636,19 +585,12 @@
     document.getElementById('acrSearch').addEventListener('input', (e)=> renderAcrList(e.target.value));
 
     // -------------------------
-    // Events
+    // Transcript helpers (shared by Budget overlay)
     // -------------------------
-    // Events
-    // -------------------------
-    document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
-    document.getElementById("sortSel").addEventListener("change", (e)=>{ state.sort = e.target.value; renderCards(); });
-
-    // ------- Transcript loader: fetch .vtt, parse to plain text with clickable timestamps
     async function loadVTT(url){
       const res = await fetch(url);
       if(!res.ok) throw new Error('Transcript not found');
       const text = await res.text();
-
       const lines = text.split(/\r?\n/);
       const cues = [];
       let i=0;
@@ -676,8 +618,6 @@
       }
       return cues;
     }
-
-    // ------- Render transcript with search + jump-to-time
     function renderTranscript(cues, filter=""){
       const wrap = document.getElementById('transcript');
       const needle = filter.trim().toLowerCase();
@@ -693,7 +633,6 @@
           <span class="ml-2">${shown}</span>
         </div>`;
       }).join('');
-
       wrap.querySelectorAll('button[data-jump]').forEach(b=>{
         b.addEventListener('click', ()=>{
           const v = document.getElementById('budgetVideo');
@@ -703,57 +642,60 @@
       });
     }
 
-    // ------- Wire up Budget bundle
-    (function wireBudgetBundle(){
-      const btnT = document.getElementById('btnTranscript');
-      const wrap = document.getElementById('transcriptWrap');
-      const trInput = document.getElementById('trSearch');
-      const jumpExcel = document.getElementById('btnJumpToExcel');
+    // -------------------------
+    // Year-1 Budget overlay logic
+    // -------------------------
+    (function wireBudgetOverlay(){
+      const openBtn = document.getElementById('openBudget');
+      const panel = document.getElementById('budgetPanel');
+      const backd = document.getElementById('budgetBackdrop');
+      const closeBtn = document.getElementById('closeBudget');
+      const trSearch = document.getElementById('trSearch');
+      const btnJump = document.getElementById('btnJumpToExcel');
       let cuesCache = null;
-      let visible = false;
 
-      btnT?.addEventListener('click', async ()=>{
-        visible = !visible;
-        wrap.classList.toggle('hidden', !visible);
-        btnT.innerHTML = visible
-          ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg> Hide Transcript`
-          : `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h9.5L20 7.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-1.5Z"/><path d="M14 3v4h4"/></svg> Show Transcript`;
-        if(visible && !cuesCache){
-          try {
-            cuesCache = await loadVTT('assets/media/GMT20251003-130246_Recording.transcript.vtt');
-            renderTranscript(cuesCache);
-          } catch(e){
-            document.getElementById('transcript').innerHTML = `<div class="text-sm text-slate-500">Transcript not found.</div>`;
-          }
+      function open(){
+        panel.classList.add('overlay-open');
+        backd.classList.remove('hidden');
+        if(!cuesCache){
+          loadVTT('assets/media/GMT20251003-130246_Recording.transcript.vtt')
+            .then(cues => { cuesCache = cues; renderTranscript(cuesCache); })
+            .catch(()=>{ document.getElementById('transcript').innerHTML = '<div class="text-sm text-slate-500">Transcript not found.</div>'; });
         }
-      });
+      }
+      function close(){ panel.classList.remove('overlay-open'); backd.classList.add('hidden'); }
 
-      trInput?.addEventListener('input', (e)=>{
+      openBtn?.addEventListener('click', open);
+      closeBtn?.addEventListener('click', close);
+      backd?.addEventListener('click', close);
+
+      trSearch?.addEventListener('input', (e)=>{
         if(cuesCache) renderTranscript(cuesCache, e.target.value);
       });
 
-      jumpExcel?.addEventListener('click', ()=>{
+      btnJump?.addEventListener('click', ()=>{
         const v = document.getElementById('budgetVideo');
         if(!cuesCache) return;
         const hit = cuesCache.find(c => /excel|calculator|spreadsheet/i.test(c.text));
-        if(hit){
-          v.currentTime = hit.t; v.play().catch(()=>{});
-          if(!visible){ btnT.click(); }
-          trInput.value = "excel"; renderTranscript(cuesCache, "excel");
-        }
+        if(hit){ v.currentTime = hit.t; v.play().catch(()=>{}); trSearch.value = "excel"; renderTranscript(cuesCache, "excel"); }
       });
     })();
+
+    // -------------------------
+    // Events
+    // -------------------------
+    document.getElementById("searchInput").addEventListener("input", (e)=>{ state.q = e.target.value; renderCards(); });
+    document.getElementById("sortSel").addEventListener("change", (e)=>{ state.sort = e.target.value; renderCards(); });
 
     // -------------------------
     // Init
     // -------------------------
     (async function init(){
       renderFilters();
-      await loadExternalSummaries();
+      await loadExternalSummaries(); // optional override support
       renderCards();
       renderAcrList();
     })();
-
   </script>
 </body>
 </html>
